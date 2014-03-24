@@ -1,23 +1,80 @@
 doctype html
-html
-  head
-    title= title
 
-    // Viewport mobile tag for sensible mobile support
-    meta(name="viewport",content="width=device-width, initial-scale=1, maximum-scale=1")
+title= title
+meta(name="viewport", content="width=device-width, initial-scale=1.0")
+link(rel='shortcut icon', href='/favicon.ico')
 
-    block styles
+link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+link(rel='stylesheet', href='/stylesheets/style.css')
+// STYLES
+link(rel="stylesheet", href="/linker/css/tips.css")
+// STYLES END
 
-  body
-    block body
+header.navbar.navbar-default.navbar-fixed-top
+  .container-fluid
 
-    // A few key dependencies, linked in order
+    .navbar-header
+      // 画面幅が短い時に表示される開閉ボタン
+      button.navbar-toggle(type='button', data-toggle='collapse', data-target='navbar-items')
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar
+      // ロゴ
+      a.navbar-brand(href='/')= title
 
-    // Bring in the socket.io client
-    script(type="text/javascript", src="/js/socket.io.js")
+    // トグル可能なナビゲーション要素
+    .collapse.navbar-collapse#navbar-items
+      // リンク
+      ul.nav.navbar-nav
+        li: a(href='/user/login') ログイン
+        li: a(href='/user/create') アカウント作成
+        li: a(href='/support/hello') このサイトについて
+        //- - if (user === undefined || user === null)
+        //-   li: a(href='/user/login') ログイン
+        //-   li: a(href='/user/create') アカウント作成
+        //-   li: a(href='/support/hello') このサイトについて
+        //- - else
+        //-   li.dropdown
+        //-     a.dropdown-toggle(href='#' data-toggle='dropdown')
+        //-       span.glyphicon.glyphicon-cloud
+        //-       |  連携サービス <b class="caret"></b>
+        //-     ul.dropdown-menu
+        //-       li: a(href='/help/hatenablog') <small>日記</small> はてなブログ
+        //-       li: a(href='/help/zusaar') <small>オフ会</small> Zusaar
+        //-       li: a(href='/help/twitch') <small>生放送</small> Twitch
+        //-       li: a(href='/help/twitter') <small>一行宣伝</small> Twitter
+        //-   li: a(href='/user/#{ user.id }')
+        //-     span.glyphicon.glyphicon-user
+        //-     |  プロフィール
+        //-   li.dropdown
+        //-     a.dropdown-toggle(href='#' data-toggle='dropdown')
+        //-       span.glyphicon.glyphicon-cog
+        //-       |  設定 <b class="caret"></b>
+        //-     ul.dropdown-menu
+        //-       li: a(href='/help/hatenablog') <small>日記</small> はてなブログ
+        //-       li: a(href='/help/zusaar') <small>オフ会</small> Zusaar
+        //-       li: a(href='/help/twitch') <small>生放送</small> Twitch
+        //-       li: a(href='/help/twitter') <small>一行宣伝</small> Twitter
+        //-   li: a(href='/user/logout')
+        //-     span.glyphicon.glyphicon-log-out
+        //-     |  ログアウト
+      // 検索ボックス
+      form.navbar-form.navbar-right(action='/user/search')
+        .form-group
+          input.form-control(name='username', type='text', placeholder='探したいメンバー')
+        button.btn.btn-default(type='submit')
+          span.glyphicon.glyphicon-search
+          |  検索
 
-    // then beef it up with some convenience logic for talking to Sails.js'
-    script(type="text/javascript", src="/js/sails.io.js")
 
-    // listen on socket.io for incoming messages
-    script(type="text/javascript", src="/js/app.js")
+block heading
+
+.container
+  block content
+
+script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js')
+script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
+// SCRIPTS
+script(type="text/javascript", src="/linker/js/header.js")
+// SCRIPTS END
+block script

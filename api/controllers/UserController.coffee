@@ -49,3 +49,16 @@ module.exports =
   logout: (req, res) ->
     req.session.user = null
     res.json { success: 'logout' }
+
+  links: (req, res) ->
+    if req.session.user?
+      User.findOne(req.session.user).done (err, user) ->
+        res.json { error: 'Database error' }, 500 if err
+        res.json
+          id: user.id
+          hatenablog: user.hatenablog
+          zusaar: user.zusaar
+          twitch: user.twitch
+          twitter: user.twitter
+    else
+      res.json { error: 'Only for authenticated user' }, 400
