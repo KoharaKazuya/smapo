@@ -45,3 +45,7 @@ module.exports =
 
       else
         res.json { error: 'User not found' }, 404
+
+  logout: (req, res) ->
+    req.session.user = null
+    res.json { success: 'logout' }
