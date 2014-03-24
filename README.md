@@ -1,0 +1,2 @@
+# smapo
+### a Sails application
