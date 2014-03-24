@@ -6,6 +6,8 @@ User
 @docs        :: http://sailsjs.org/#!documentation/models
 ###
 
+bcrypt = require 'bcrypt'
+
 module.exports =
 
   attributes:
@@ -13,10 +15,12 @@ module.exports =
     username:
       type: 'string'
       required: true
+      unique: true
       maxLength: 32
     email:
       type: 'email'
       required: true
+      unique: true
     password:
       type: 'string'
       required: true
@@ -54,3 +58,9 @@ module.exports =
       type: 'integer'
       min: 0
       defaultsTo: 0
+
+  beforeCreate: (values, next) ->
+    bcrypt.hash values.password, 8, (err, hash) ->
+      return next(err) if err
+      values.password = hash
+      next()
