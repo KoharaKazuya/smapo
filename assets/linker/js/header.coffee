@@ -55,7 +55,7 @@ jQuery.ajax '/user/links',
           .append($link_twitch)
           .append($link_twitter)
 
-      $logout = $('<li>').append $("<a href=\"/user/logout\">")
+      $logout = $('<li>').append $("<a href=\"/user/signout\">")
         .text(' ログアウト')
         .prepend($ '<span class="glyphicon glyphicon-log-out">')
 

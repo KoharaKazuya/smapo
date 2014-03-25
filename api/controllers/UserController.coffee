@@ -81,3 +81,7 @@ module.exports =
       res.redirect '/'
     else
       res.view()
+
+  signout: (req, res) ->
+    req.session.user = null
+    res.redirect 'back'
