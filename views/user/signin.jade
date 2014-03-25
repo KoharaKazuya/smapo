@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+  h2.page-header ログイン
+  form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-url='/user/login')
+    input(type='hidden', name='_csrf', value='#{ _csrf }')
+    fieldset
+      .form-group
+        label.col-md-3.control-label(for='account') ユーザー名 <small>もしくは</small> メールアドレス
+        .col-md-9
+          input.form-control#account(name='account', placeholder='ユーザー名 もしくは メールアドレス')
+      .form-group
+        label.col-md-3.control-label(for='password') パスワード
+        .col-md-9
+          input.form-control#password(type='password', name='password', placeholder='パスワード')
+      .form-group
+        .col-md-offset-3.col-md-9
+          button.btn.btn-primary ログイン

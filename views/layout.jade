@@ -26,7 +26,7 @@ header.navbar.navbar-default.navbar-fixed-top
     .collapse.navbar-collapse#navbar-items
       // リンク
       ul.nav.navbar-nav
-        li: a(href='/user/login') ログイン
+        li: a(href='/user/signin') ログイン
         li: a(href='/user/new') アカウント作成
         li: a(href='/support/hello') このサイトについて
         //- - if (user === undefined || user === null)
@@ -70,6 +70,7 @@ header.navbar.navbar-default.navbar-fixed-top
 block heading
 
 .container
+  .row.flash-message-box
   block content
 
 footer.footer-information.text-center.text-muted
@@ -90,5 +91,6 @@ script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js')
 script(src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
 // SCRIPTS
 script(type="text/javascript", src="/linker/js/header.js")
+script(type="text/javascript", src="/linker/js/mainform.js")
 // SCRIPTS END
 block script

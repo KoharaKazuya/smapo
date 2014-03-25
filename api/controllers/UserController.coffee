@@ -36,15 +36,25 @@ module.exports =
         bcrypt.compare req.body.password, user.password, (err, match) ->
           res.json { error: 'Server error' }, 500 if err
 
-          if match?
+          if match
             req.session.user = user.id
             res.json user
           else
             req.session.user = null
-            res.json { error: 'Invalid password' }, 400
+            res.json
+              errors: [
+                ValidationError:
+                  password: 'Invalid password'
+              ]
+            , 400
 
       else
-        res.json { error: 'User not found' }, 404
+        res.json
+          errors: [
+            ValidationError:
+              account: 'User not found'
+          ]
+        , 404
 
   logout: (req, res) ->
     req.session.user = null
@@ -65,3 +75,9 @@ module.exports =
 
   new: (req, res) ->
     res.view()
+
+  signin: (req, res) ->
+    if req.session.user?
+      res.redirect '/'
+    else
+      res.view()

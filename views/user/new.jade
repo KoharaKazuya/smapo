@@ -1,38 +1,8 @@
 extends ../layout
 
-block script
-  script
-    :coffee
-      $ ->
-        $form = $ 'form'
-        submitHandler = (event) ->
-          $form.off 'submit', submitHandler
-          # form validation reset
-          $('.has-error').removeClass 'has-error'
-          # generate data
-          data = {}
-          $($form.serializeArray()).each (i, v) ->
-            data[v.name] = v.value
-          # post
-          jQuery.ajax
-            url: '/user/create'
-            method: 'post'
-            data: data
-            success: (data) ->
-              location.href = '/'
-            error: (jqXHR) ->
-              $form.on 'submit', submitHandler
-              json = jqXHR.responseJSON
-              for e in json.errors
-                if (e.ValidationError?)
-                  for name, arr of e.ValidationError
-                    $(".form-group:has(##{name})").addClass 'has-error'
-          event.preventDefault()
-        $form.on 'submit', submitHandler
-
 block content
   h2.page-header アカウント作成
-  form.form-horizontal(action='javascript:void(0)', accept-charset='utf-8')
+  form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-url='/user')
     input(type='hidden', name='_csrf', value='#{ _csrf }')
     fieldset
       .form-group
