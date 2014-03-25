@@ -1,0 +1,56 @@
+extends ../layout
+
+block script
+  script
+    :coffee
+      $ ->
+        $form = $ 'form'
+        submitHandler = (event) ->
+          $form.off 'submit', submitHandler
+          # form validation reset
+          $('.has-error').removeClass 'has-error'
+          # generate data
+          data = {}
+          $($form.serializeArray()).each (i, v) ->
+            data[v.name] = v.value
+          # post
+          jQuery.ajax
+            url: '/user/create'
+            method: 'post'
+            data: data
+            success: (data) ->
+              location.href = '/'
+            error: (jqXHR) ->
+              $form.on 'submit', submitHandler
+              json = jqXHR.responseJSON
+              for e in json.errors
+                if (e.ValidationError?)
+                  for name, arr of e.ValidationError
+                    $(".form-group:has(##{name})").addClass 'has-error'
+          event.preventDefault()
+        $form.on 'submit', submitHandler
+
+block content
+  h2.page-header アカウント作成
+  form.form-horizontal(action='javascript:void(0)', accept-charset='utf-8')
+    input(type='hidden', name='_csrf', value='#{ _csrf }')
+    fieldset
+      .form-group
+        label.col-md-3.control-label(for='username') ユーザー名 <small class="text-warning">(後から変更できません)</small>
+        .col-md-9
+          input.form-control#username(name='username', placeholder='ユーザー名')
+      .form-group
+        label.col-md-3.control-label(for='email') メールアドレス
+        .col-md-9
+          input.form-control#email(type='email', name='email', placeholder='メールアドレス')
+      .form-group
+        label.col-md-3.control-label(for='password') パスワード
+        .col-md-9
+          input.form-control#password(type='password', name='password', placeholder='パスワード')
+      .form-group
+        label.col-md-3.control-label(for='password_confirmation') パスワードの確認
+        .col-md-9
+          input.form-control#password_confirmation(type='password', name='password_confirmation', placeholder='パスワードの確認')
+      .form-group
+        .col-md-offset-3.col-md-9
+          button.btn.btn-primary アカウント作成

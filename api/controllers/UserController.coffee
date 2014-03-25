@@ -62,3 +62,6 @@ module.exports =
           twitter: user.twitter
     else
       res.json { error: 'Only for authenticated user' }, 400
+
+  new: (req, res) ->
+    res.view()
