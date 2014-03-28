@@ -1,0 +1,86 @@
+extends ../layout
+
+block script
+  script
+    :coffee
+      # display user info
+      user_id = $.cookie('user_id')
+      jQuery.ajax
+        method: 'get'
+        url: '/user/' + user_id
+        success: (user) ->
+          $ ->
+            for name in ['hatenablog', 'zusaar', 'twitch', 'twitter', 'skype', 'nicovideo']
+              form_old_input name, user
+        error: ->
+          alert 'ユーザーデータを取得できません'
+      $ ->
+        $('.main-form').attr 'data-url', '/user/' + user_id
+
+block content
+  h2.page-header 連携サービス設定
+  .row
+    .col-md-12
+      form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-method='put')
+        input(type='hidden', name='_csrf', value='#{ _csrf }')
+
+        fieldset
+          legend ブログ
+          .form-group
+            label.col-md-3.control-label(for='hatenablog') はてなブログ <a href="//hatenablog.com"><span class="glyphicon glyphicon-link"></span></a> <a href="/help/hatenablog"><span class="glyphicon glyphicon-question-sign"></span></a>
+            .col-md-9
+              .input-group
+                input.form-control#hatenablog(name='hatenablog', placeholder='はてなブログの ID')
+                span.input-group-btn
+                  button.btn.btn-default(type='button') 確認
+
+        fieldset
+          legend オフ会
+          .form-group
+            label.col-md-3.control-label(for='zusaar') Zusaar <a href="//www.zusaar.com"><span class="glyphicon glyphicon-link"></span></a> <a href="/help/zusaar"><span class="glyphicon glyphicon-question-sign"></span></a>
+            .col-md-9
+              .input-group
+                input.form-control#zusaar(name='zusaar', placeholder='Zusaar ID')
+                span.input-group-btn
+                  button.btn.btn-default(type='button') 確認
+
+        fieldset
+          legend 生放送
+          .form-group
+            label.col-md-3.control-label(for='twitch') Twitch <a href="//ja.twitch.tv"><span class="glyphicon glyphicon-link"></span></a> <a href="/help/twitch"><span class="glyphicon glyphicon-question-sign"></span></a>
+            .col-md-9
+              .input-group
+                input.form-control#twitch(name='twitch', placeholder='Twitch ID')
+                span.input-group-btn
+                  button.btn.btn-default(type='button') 確認
+
+        fieldset
+          legend ネット対戦募集 or 一行宣伝
+          .form-group
+            label.col-md-3.control-label(for='twitter') Twitter <a href="//twitter.com"><span class="glyphicon glyphicon-link"></span></a> <a href="/help/twitter"><span class="glyphicon glyphicon-question-sign"></span></a>
+            .col-md-9
+              .input-group
+                input.form-control#twitter(name='twitter', placeholder='Twitter ID (@ は除く)')
+                span.input-group-btn
+                  button.btn.btn-default(type='button') 確認
+
+        fieldset
+          legend その他 <small>(連携なし)</small>
+          .form-group
+            label.col-md-3.control-label(for='skype') Skype <a href="//www.skype.com"><span class="glyphicon glyphicon-link"></span></a>
+            .col-md-9
+              .input-group
+                input.form-control#skype(name='skype', placeholder='Skype ID')
+                span.input-group-btn
+                  button.btn.btn-default(type='button') 確認
+          .form-group
+            label.col-md-3.control-label(for='nicovideo') ニコニコ動画 <a href="//www.nicovideo.jp"><span class="glyphicon glyphicon-link"></span></a>
+            .col-md-9
+              .input-group
+                input.form-control#nicovideo(name='nicovideo', placeholder='ニコニコ動画 ユーザー ID')
+                span.input-group-btn
+                  button.btn.btn-default(type='button') 確認
+
+        .form-group
+          .col-md-offset-3.col-md-9
+            input.btn.btn-primary(type='submit' value='変更')

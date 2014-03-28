@@ -1,7 +1,6 @@
 extends ../layout
 
 block script
-  script(src='//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.min.js')
   script
     :coffee
       $ ->
@@ -16,8 +15,8 @@ block script
             $('#user-icon-link').attr 'href', user.icon
             $('#user-icon-img').attr 'src', user.icon
             $('#username').text user.username
-            $('#catchphrase').val user.catchphrase
-            $('#self_introduction').val user.self_introduction
+            for name in ['catchphrase', 'self_introduction']
+              form_old_input name, user
         error: ->
           alert 'ユーザーデータを取得できません'
       $ ->
