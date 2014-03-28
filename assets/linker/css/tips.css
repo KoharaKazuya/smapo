@@ -7,3 +7,14 @@ body {
     margin-top: 100px;
     border-top: 1px solid #ddd;
 }
+
+.user-icon {
+    width: 74px;
+}
+
+.user-icon, .img-frame {
+    padding: 4px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

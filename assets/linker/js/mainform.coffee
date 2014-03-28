@@ -1,9 +1,11 @@
 $ ->
-  $form = $ '.main-form'
   submitHandler = (event) ->
+    $form = $(@)
     $form.off 'submit', submitHandler
     # form validation reset
     $('.has-error').removeClass 'has-error'
+    $box = $('.flash-message-box')
+    $box.empty()
     # generate data
     data = {}
     $($form.serializeArray()).each (i, v) ->
@@ -11,17 +13,20 @@ $ ->
     # post
     jQuery.ajax
       url: $form.data 'url'
-      method: 'post'
+      method: $form.data 'method'
       data: data
       success: (data) ->
-        location.href = '/'
+        $redirect = $form.data 'redirect'
+        if $redirect
+          location.href = $redirect
+        else
+          $form.on 'submit', submitHandler
+          $box.append $('<div>').addClass('alert').addClass('alert-success').text('送信に成功しました')
       error: (jqXHR) ->
         $form.on 'submit', submitHandler
         json = jqXHR.responseJSON
         if json?
           if json.error
-            $box = $('.flash-message-box')
-            $box.empty()
             $box.append $('<div>').addClass('alert').addClass('alert-danger').text(json.error)
           if json.errors?
             for e in json.errors
@@ -29,4 +34,4 @@ $ ->
                 for name, arr of e.ValidationError
                   $(".form-group:has(##{name})").addClass 'has-error'
     event.preventDefault()
-  $form.on 'submit', submitHandler
+  $('.main-form').on 'submit', submitHandler

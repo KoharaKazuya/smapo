@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   h2.page-header ログイン
-  form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-url='/user/login')
+  form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-url='/user/login', data-method='post', data-redirect='/')
     input(type='hidden', name='_csrf', value='#{ _csrf }')
     fieldset
       .form-group

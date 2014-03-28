@@ -38,9 +38,9 @@ jQuery.ajax '/user/links',
           .prepend($('<span class="glyphicon glyphicon-cog">'))
           .append($('<b class="caret">')))
         .append $('<ul class="dropdown-menu">')
-          .append(li_a 'setting/profile', 'プロフィール')
-          .append(li_a 'setting/service', '連携サービス')
-          .append(li_a 'setting/account', 'アカウント')
+          .append(li_a '/setting/profile', 'プロフィール')
+          .append(li_a '/setting/service', '連携サービス')
+          .append(li_a '/setting/account', 'アカウント')
 
       $help = $('<li class="dropdown">')
         .append($('<a class="dropdown-toggle" href="#" data-toggle="dropdown">')
