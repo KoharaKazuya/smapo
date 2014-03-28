@@ -1,0 +1,51 @@
+extends ../layout
+
+block script
+  script
+    :coffee
+      $ ->
+        $('[data-toggle=popover]').popover()
+      # display user info
+      user_id = $.cookie('user_id')
+      jQuery.ajax
+        method: 'get'
+        url: '/user/' + user_id
+        success: (user) ->
+          $ ->
+            $('#username').text user.username
+            $('#email').text user.email
+        error: ->
+          alert 'ユーザーデータを取得できません'
+      $ ->
+        $('.main-form').attr 'data-url', '/user/' + user_id
+
+block content
+  h2.page-header アカウント設定
+
+  .row
+    .col-md-12
+
+      form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-method='put')
+        input(type='hidden', name='_csrf', value='#{ _csrf }')
+        fieldset
+          legend アカウント情報
+          .form-group
+            label.col-md-3.control-label ユーザー名
+            .col-md-9
+              p.form-control-static#username
+          .form-group
+            label.col-md-3.control-label メールアドレス
+            .col-md-9
+              p.form-control-static#email
+
+      form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-method='delete')
+        input(type='hidden', name='_csrf', value='#{ _csrf }')
+        fieldset
+          legend アカウントの削除
+          .form-group
+            label.col-md-3.control-label(for='delete-username') ユーザー名
+            .col-md-9
+              input.form-control#delete-username(name='username', placeholder='ユーザー名')
+          .form-group
+            .col-md-offset-3.col-md-9
+              input.btn.btn-danger(type='submit', value='アカウントを削除')
