@@ -30,7 +30,7 @@ module.exports =
       type: 'boolean'
       defaultsTo: false
     # profile
-    selfIntroduction:
+    self_introduction:
       type: 'text'
       maxLength: 10000
     icon:
@@ -58,9 +58,42 @@ module.exports =
       type: 'integer'
       min: 0
       defaultsTo: 0
+    toJSON: () ->
+      obj = @.toObject()
+      delete obj.password
+      obj
 
   beforeCreate: (values, next) ->
+    if values.password != values.password_confirmation
+      return next
+        ValidationError:
+          password_confirmation: 'password confirmation is different'
+    # remove invalid attributes
+    removeInvalidAttributes values
+    # encode password
     bcrypt.hash values.password, 8, (err, hash) ->
       return next(err) if err
       values.password = hash
       next()
+
+  beforeUpdate: (values, next) ->
+    removeInvalidAttributes values
+    next()
+
+removeInvalidAttributes = (values) ->
+  for k, v of values
+    delete values[k] unless k in [
+      'username'
+      'email'
+      'password'
+      'confirmed'
+      'self_introduction'
+      'icon'
+      'catchphrase'
+      'hatenablog'
+      'zusaar'
+      'twitch'
+      'twitter'
+      'skype'
+      'nicovideo'
+    ]
