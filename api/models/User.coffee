@@ -77,8 +77,27 @@ module.exports =
       next()
 
   beforeUpdate: (values, next) ->
+    if values.password != values.password_confirmation
+      return next
+        ValidationError:
+          password_confirmation: 'password confirmation is different'
+    # remove not-updatable attributes
+    delete values.username
+    delete values.confirmed
+    # email confirmation check
+    values.confirmed = false if values.email?
+    if values.confirmation_code?
+      values.confirmed = true if bcrypt.compareSync values.email + sails.config.session.secret, values.confirmation_code
+
     removeInvalidAttributes values
-    next()
+    # encode password
+    if values.password?
+      bcrypt.hash values.password, 8, (err, hash) ->
+        return next(err) if err
+        values.password = hash
+        next()
+    else
+      next()
 
 removeInvalidAttributes = (values) ->
   for k, v of values
