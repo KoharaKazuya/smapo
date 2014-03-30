@@ -61,6 +61,9 @@ module.exports =
     toJSON: () ->
       obj = @.toObject()
       delete obj.password
+      delete obj.email
+      delete obj.createdAt
+      delete obj.updatedAt
       obj
 
   beforeCreate: (values, next) ->
