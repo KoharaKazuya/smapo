@@ -57,7 +57,6 @@ module.exports =
     nicovideo:
       type: 'integer'
       min: 0
-      defaultsTo: 0
     toJSON: () ->
       obj = @.toObject()
       delete obj.password
