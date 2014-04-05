@@ -32,6 +32,18 @@ module.exports =
           summary: e.description
         }
 
+  twitch: (req, res) ->
+    externalApi req, res, 'twitch', 'https://api.twitch.tv/kraken/streams/___id___', 5, (body) ->
+      json = JSON.parse body
+      return null unless json.stream? and json.stream.channel?
+      channel = json.stream.channel
+      return {
+        title: channel.status
+        game: channel.game
+        link: channel.url
+        time: 0
+      }
+
 
 externalApi = (req, res, service, url, size, body2Entry) ->
   return res.json { error: 'Must login' } unless req.session.user?

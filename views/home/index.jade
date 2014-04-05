@@ -25,6 +25,16 @@ block script
             $('<p>').text(entry.summary)
           )
           $ul.prepend $li
+      jQuery.get '/widget/twitch', (entries) ->
+        $ul = $('#live ul')
+        for entry in entries
+          $li = $('<li>')
+          $li.append $('<a>').append($('<img>').addClass('user-icon'))
+          date = new Date(entry.time)
+          $li.append $('<a>').attr('href', entry.link).append(
+            $('<h5>').text(' ' + entry.title).prepend($('<small>').text(entry.game))
+          )
+          $ul.prepend $li
 
 block content
   // 上部 全面
