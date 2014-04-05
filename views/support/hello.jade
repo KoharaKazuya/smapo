@@ -1,0 +1,28 @@
+extends ../layout
+
+block script
+  script
+    :coffee
+      jQuery.ajax
+        url: '/user'
+        success: (data) ->
+          $('#usernum').text data.length
+
+block heading
+  .portal-logo
+    .container
+      h1= title
+      p スマブラ専門 個人ポータルサイト
+
+block content
+  p 友だちが公開しているブログ、生放送、対戦募集などを見てみましょう。
+  p
+    a.btn.btn-default.btn-sm(href='user/login') ログイン
+    | するか
+    a.btn.btn-primary.btn-sm(href='user/create') アカウントを作成
+    | して下さい。
+  p
+    | 現在の登録者数：
+    span.badge#usernum
+    br
+    a(href='/userlist') 登録してるユーザーを見る

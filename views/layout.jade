@@ -7,6 +7,7 @@ link(rel='shortcut icon', href='/favicon.ico')
 link(rel='stylesheet', href='//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
 link(rel='stylesheet', href='/stylesheets/style.css')
 // STYLES
+link(rel="stylesheet", href="/linker/css/portallogo.css")
 link(rel="stylesheet", href="/linker/css/tips.css")
 // STYLES END
 
@@ -28,11 +29,11 @@ header.navbar.navbar-default.navbar-fixed-top
       ul.nav.navbar-nav
         li: a(href='/user/signin') ログイン
         li: a(href='/user/new') アカウント作成
-        li: a(href='/support/hello') このサイトについて
+        li: a(href='/hello') このサイトについて
         //- - if (user === undefined || user === null)
         //-   li: a(href='/user/login') ログイン
         //-   li: a(href='/user/create') アカウント作成
-        //-   li: a(href='/support/hello') このサイトについて
+        //-   li: a(href='/hello') このサイトについて
         //- - else
         //-   li.dropdown
         //-     a.dropdown-toggle(href='#' data-toggle='dropdown')
@@ -80,7 +81,7 @@ footer.footer-information.text-center.text-muted
         = title
         |  <small>スマブラ専門 個人ポータルサイト</small>
       ul.nav.nav-pills.nav-justified
-        li: a(href='/support/hello')
+        li: a(href='/hello')
           = title
           | について
         li: a(href='/user') 全ユーザーリスト

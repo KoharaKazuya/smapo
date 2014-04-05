@@ -50,6 +50,10 @@ module.exports.routes = {
     view: 'setting/account'
   },
 
+  '/hello': {
+    view: 'support/hello'
+  },
+
   '/help/usage': {
     view: 'support/usage'
   },
