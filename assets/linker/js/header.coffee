@@ -1,4 +1,4 @@
-jQuery.ajax '/user/links',
+jQuery.ajax '/user/' + $.cookie('user_id'),
   success: (data) ->
     jQuery ->
       $ul = $ 'header.navbar #navbar-items ul'
@@ -55,9 +55,13 @@ jQuery.ajax '/user/links',
           .append($link_twitch)
           .append($link_twitter)
 
-      $logout = $('<li>').append $("<a href=\"/user/signout\">")
+      $logout = $('<li>').append $('<a href="javascript:void(0)">')
         .text(' ログアウト')
         .prepend($ '<span class="glyphicon glyphicon-log-out">')
+        .on 'click', (event) ->
+          jQuery.ajax '/auth/logout',
+            success: (data) ->
+              location.href = '/'
 
       # refresh header list
       $ul.empty()

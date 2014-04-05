@@ -36,6 +36,14 @@ module.exports.routes = {
     view: 'home/index'
   },
 
+  '/user/new': {
+    view: 'user/new'
+  },
+
+  '/auth/signin': {
+    view: 'auth/signin'
+  },
+
   '/profile/:id': {
     view: 'profile'
   },
