@@ -1,0 +1,24 @@
+extends layout
+
+block script
+  script
+    :coffee
+      jQuery.ajax
+        url: '/user'
+        success: (users) ->
+          $list = $('#userlist')
+          for user in users
+            $a = $('<a>')
+              .addClass('list-group-item hide-overflow')
+              .attr('href', "/profile/#{user.id}")
+              .text(user.username + ' ')
+              .append($('<small>').text(user.catchphrase))
+            $list.append $a
+        error: ->
+          alert 'ユーザーデータを取得できません'
+
+block content
+  h2.page-header 全ユーザーリスト
+  .row
+    .col-md-12
+      .list-group#userlist
