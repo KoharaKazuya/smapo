@@ -1,6 +1,7 @@
 extends layout
 
 block script
+  script(src='//cdnjs.cloudflare.com/ajax/libs/marked/0.3.1/marked.min.js')
   script
     :coffee
       user_id = location.href.replace /^.+(\d+)$/, "$1"
@@ -11,7 +12,7 @@ block script
           $ ->
             $('#username').text user.username
             $('#catchphrase').text user.catchphrase
-            $('#self_introduction').text user.self_introduction
+            $('#self_introduction').html marked(user.self_introduction, { sanitize: true })
             addServiceLink = (name, tag, url) ->
               $li = $('<a>').addClass('list-group-item').attr('href', url)
               $li.text ' ' + name
