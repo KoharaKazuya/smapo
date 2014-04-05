@@ -57,6 +57,9 @@ module.exports.routes = {
   '/setting/account': {
     view: 'setting/account'
   },
+  '/setting/follow': {
+    view: 'setting/follow'
+  },
 
   '/hello': {
     view: 'support/hello'
