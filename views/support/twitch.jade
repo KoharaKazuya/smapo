@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+  h2.page-header Twitch <small>で生放送をする方法</small>
+  .row
+    .col-md-12
+      h3 STEP1 ユーザー登録
+      p
+        a(href='//ja.twitch.tv') こちら
+        | で行います。
+      p
+        img.img-responsive.img-frame(src='/images/support/twitch/signup.png')
+      p
+        | ページ右上の
+        strong  サインアップ
+        | から行います。
+      h3 STEP2 放送する
+      p 生放送は環境に大きく左右されます。あなたの環境に合わせた方法の調査が必要です。
+      h3 STEP3 連携の設定をする
+      p
+        | 自分のユーザー名を知る必要があります。
+        br
+        | まず
+        a(href='//ja.twitch.tv') Twitch
+        | にログイン後、右上のユーザー名を確認します。
+      p
+        img.img-responsive.img-frame(src='/images/support/twitch/channel.png')
+      p
+        strong
+          span.glyphicon.glyphicon-cog
+          | 設定
+        | >
+        strong  連携サービス設定
+        | から
+        strong  Twitch
+        | の欄にユーザー名を入力することで連携設定が完了します。

@@ -1,0 +1,72 @@
+extends ../layout
+
+block content
+  h2.page-header はてなブログ <small>で日記を書く方法</small>
+  .row
+    .col-md-12
+      h3 STEP1 ユーザー登録
+      p
+        a(href='https://www.hatena.ne.jp/register') こちら
+        | で行います。
+      h3 STEP2 記事を書く
+      p
+        a(href='http://hatenablog.com/') はてなブログ
+        | にアクセスするとページ右上に次のような画像が表示されます。
+      p
+        img.img-responsive.img-frame(src='/images/support/hatenablog/login.png')
+      p
+        | その中の
+        strong  ログイン
+        | ボタンで先ほど作成したアカウントでログインします。
+        br
+        | ログインすると同じ場所に右のような画像が表示されます。
+      p
+        img.img-responsive.img-frame(src='/images/support/hatenablog/createblog.png')
+      p
+        | その中の
+        strong  ブログ開設（無料）
+        | をクリックします。
+        br
+        | クリックすると次のような画面に移ります。
+      p
+        img.img-responsive.img-frame(src='/images/support/hatenablog/bloginfo.png')
+      p
+        | ブログの URL は自由に決められますが、
+        strong
+          | このサイトと連携するためには
+          code .hatenablog.com
+          | を変更しないで下さい
+        | 。必要な情報を入力した後、
+        strong  ブログを作成
+        | ボタンを押して下さい。
+        br
+        | ブログ作成後は右上に表示される指示の通り、
+        strong  記事を書く
+        | を押すと日記を書くことが出来ます。
+      p
+        img.img-responsive.img-frame(src='/images/support/hatenablog/write.png')
+      h3 STEP3 連携の設定をする
+      p
+        | 自分のブログの URL を知る必要があります。
+        a(href='//hatenablog.com') はてなブログ
+        | にログインし、右上のメニューから
+        strong  (自分のブログ名)
+        | をクリックします。
+      p
+        img.img-responsive.img-frame(src='/images/support/hatenablog/myblog.png')
+      p
+        | その後、ブラウザの上部に表示されている
+        code ??????.hetenablog.com
+        | の
+        code .hatenablog.com
+        | の前の
+        code ??????
+        | の部分を
+        strong
+          span.glyphicon.glyphicon-cog
+          | 設定
+        | >
+        strong  連携サービス設定
+        | から
+        strong  はてなブログ
+        | の欄に入力することで連携設定が完了します。

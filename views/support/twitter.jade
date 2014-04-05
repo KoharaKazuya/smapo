@@ -1,0 +1,47 @@
+extends ../layout
+
+block content
+  h2.page-header Twitter <small>でネット対戦募集 or 一行宣伝を行う方法</small>
+  .row
+    .col-md-12
+      h3 STEP1 ユーザー登録
+      p
+        a(href='//twitter.com/signup') こちら
+        | で行います。
+      h3 STEP2 一行宣伝をつぶやく
+      p
+        a(href='//twitter.com') Twitter
+        | にログイン後、ページ左のボックスに
+        code @ssbportal_flash
+        | + 宣伝内容を入力 (
+        code @ssbportal_flash
+        | の後に
+        strong 必ずスペース
+        | )し、
+        strong ツイート
+        | ボタンを押します。
+      p
+        img.img-responsive.img-frame(src='/images/support/twitter/flash.png')
+      h3 STEP3 連携の設定をする
+      p
+        | 自分のユーザー名を知る必要があります。
+        br
+        | まず
+        a(href='//twitter.com') Twitter
+        | にログイン後、ページ左の
+        code @
+        | 以下のユーザー名を確認します。
+      p
+        img.img-responsive.img-frame(src='/images/support/twitter/screenname.png')
+      p
+        strong
+          span.glyphicon.glyphicon-cog
+          | 設定
+        | >
+        strong  連携サービス設定
+        | から
+        strong  Twitter
+        | の欄にユーザー名を入力することで連携設定が完了します。この時、
+        strong
+          code @
+          | は含まないように注意して下さい。

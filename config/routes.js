@@ -48,6 +48,26 @@ module.exports.routes = {
     view: 'setting/account'
   },
 
+  '/help/usage': {
+    view: 'support/usage'
+  },
+
+  '/help/hatenablog': {
+    view: 'support/hatenablog'
+  },
+
+  '/help/zusaar': {
+    view: 'support/zusaar'
+  },
+
+  '/help/twitch': {
+    view: 'support/twitch'
+  },
+
+  '/help/twitter': {
+    view: 'support/twitter'
+  },
+
   /*
   // But what if you want your home page to display
   // a signup form located at `views/user/signup.ejs`?

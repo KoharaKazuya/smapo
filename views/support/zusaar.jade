@@ -1,0 +1,56 @@
+extends ../layout
+
+block content
+  h2.page-header Zusaar <small>でオフ募集をする方法</small>
+  .row
+    .col-md-12
+      h3 STEP1 ユーザー登録
+      p
+        a(href='//www.zusaar.com') こちら
+        | で行います。
+      p
+        img.img-responsive.img-frame(src='/images/support/zusaar/login.png')
+      p ページ右上のボタンから自分がお持ちのアカウントでログインして下さい。Twitter, Facebook, mixi のいずれかのアカウントが必要です。
+      h3 STEP2 募集をする
+      p
+        a(href='//www.zusaar.com') Zusaar
+        | にログイン後、右上の
+        strong  イベントをつくる
+        | からオフ募集をします。
+        p
+          img.img-responsive.img-frame(src='/images/support/zusaar/createevent.png')
+        p
+          | 必要な情報を入力後、
+          strong  イベントを作成
+          | をクリックすることで募集を開始します。なお、イベント名以外は入力しなくても作成できますが、このサイトと連携するためには
+          strong  開始日時の入力が必須
+          | です。
+        h3 STEP3 連携の設定をする
+        p
+          | 自分のユーザー ID を知る必要があります。
+          strong ユーザー ID はユーザー名のことではありません
+          | 。
+          br
+          | まず
+          a(href='//www.zusaar.com') Zusaar
+          | にログイン後、右上の
+          strong  (自分のユーザー名)
+          | をクリックします。
+        p
+          img.img-responsive.img-frame(src='/images/support/zusaar/user.png')
+        p
+          | その後、ブラウザの上部に表示されている
+          code www.zusaar.com/user/??????????????????????
+          | の
+          code www.zusaar.com/user/
+          | の後の
+          code ??????????????????????
+          | の部分を
+          strong
+            span.glyphicon.glyphicon-cog
+            | 設定
+          | >
+          strong  連携サービス設定
+          | から
+          strong  Zusaar
+          | の欄に入力することで連携設定が完了します。かなり長い文字列なのでコピー＆ペーストが必要です。

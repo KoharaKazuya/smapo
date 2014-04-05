@@ -1,0 +1,57 @@
+extends ../layout
+
+block content
+  h2.page-header このサイトの使い方
+  .row
+    .col-md-12
+      h3 はじめに
+      p
+        | まずは知っている人をフォローしましょう！
+        br
+        | 知っている人を探すにはページ右上の
+        strong  検索ボックス
+        | から検索するか、ページ下の
+        strong  全ユーザーリスト
+        | を使います。
+        br
+        | ユーザーのプロフィールのページで
+        span.btn.btn-default.btn-xs フォロー
+        | ボタンをクリックすると、トップページにフォローしたユーザーの日記、オフ募集、生放送などが表示されます。
+      h3 自己紹介を書く
+      p
+        | 他の人に自分をよく知ってもらうために自己紹介を書きましょう！
+        br
+        | 自己紹介を書くにはページ上の
+        strong
+          span.glyphicon.glyphicon-cog
+          | 設定
+        | >
+        strong  プロフィール設定
+        | から編集します。
+        br
+        | 他の人からどう見えるかはページ上の
+        strong
+          span.glyphicon.glyphicon-user
+          | プロフィール
+        | から確認できます。なお、このページは誰からも見ることが出来ます。
+      h3 日記や生放送を始める
+      p
+        | 自分でも日記を書いたり、生放送をしたりしてみませんか？
+        br
+        | このサイトでは全てのコンテンツを外部のサイトと連携して管理します。たとえば日記は
+        a(href='//hatenablog.com') はてなブログ
+        | に書き、生放送は
+        a(href='//ja.twitch.tv') Twitch
+        | で行います。
+        br
+        | 始めるにはページ上
+        strong
+          span.glyphicon.glyphicon-cloud
+          | 連携サービス
+        | を使います。その後、
+        strong
+          span.glyphicon.glyphicon-cog
+          | 設定
+        | >
+        strong  連携サービス設定
+        | から登録することで、トップページにあなたをフォローしているユーザーに情報が表示されます。一度設定すれば、以降は自動的に情報は更新されます。
