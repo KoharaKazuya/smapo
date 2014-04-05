@@ -41,6 +41,10 @@ module.exports.policies = {
     update: 'isAuthenticated',
     destroy: 'isAuthenticated'
   },
+
+  FollowController: {
+    '*': 'isOwner'
+  },
 };
 
 
