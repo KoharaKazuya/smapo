@@ -26,6 +26,35 @@ block script
             addServiceLink 'ニコニコ動画', 'その他', "//www.nicovideo.jp/user/#{user.nicovideo}" if user.nicovideo? and user.nicovideo > 0
         error: ->
           alert 'ユーザーデータを取得できません'
+      jQuery.get '/csrfToken', (csrf) ->
+        $ ->
+          my_id = $.cookie 'user_id'
+          follow_id = 0
+          if my_id?
+            jQuery.get '/follow',
+              user_id: my_id
+              follow_id: user_id
+            , (data) ->
+              if data.length > 0
+                $('#nofollow').hide()
+                follow_id = data[0].id
+                $('#following button').on 'click', (event) ->
+                  jQuery.ajax "/follow/#{ follow_id }",
+                    method: 'delete'
+                    data: csrf
+                    success: () ->
+                      $('#following').hide()
+                      $('#nofollow').show()
+              else
+                $('#following').hide()
+            $('#nofollow button').on 'click', (event) ->
+              jQuery.get "/follow/create?user_id=#{ my_id }&follow_id=#{ user_id }", null, (follow) ->
+                $('#nofollow').hide()
+                $('#following').show()
+                follow_id = follow.id
+          else
+            $('#following').hide()
+            $('#nofollow').hide()
 
 block content
   h2.page-header プロフィール
@@ -37,6 +66,12 @@ block content
         h2.media-heading.hide-overflow
           span#username
           span  <small id="catchphrase"></small>
+        #nofollow
+          span.text-info フォローしていません
+          button.btn.btn-default.btn-xs フォロー
+        #following
+          button.btn.btn-default.btn-xs フォロー解除
+
   .row
     .col-md-12
       h3 自己紹介
