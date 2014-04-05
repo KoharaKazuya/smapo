@@ -12,7 +12,7 @@ block script
           $ ->
             $('#username').text user.username
             $('#catchphrase').text user.catchphrase
-            $('#self_introduction').html marked(user.self_introduction, { sanitize: true })
+            $('#self_introduction').html marked(user.self_introduction or '', { sanitize: true })
             addServiceLink = (name, tag, url) ->
               $li = $('<a>').addClass('list-group-item').attr('href', url)
               $li.text ' ' + name
