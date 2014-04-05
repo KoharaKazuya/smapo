@@ -36,14 +36,16 @@ module.exports.routes = {
     view: 'home/index'
   },
 
+  '/profile/:id': {
+    view: 'profile'
+  },
+
   '/setting/profile': {
     view: 'setting/profile'
   },
-
   '/setting/service': {
     view: 'setting/service'
   },
-
   '/setting/account': {
     view: 'setting/account'
   },
@@ -51,19 +53,15 @@ module.exports.routes = {
   '/help/usage': {
     view: 'support/usage'
   },
-
   '/help/hatenablog': {
     view: 'support/hatenablog'
   },
-
   '/help/zusaar': {
     view: 'support/zusaar'
   },
-
   '/help/twitch': {
     view: 'support/twitch'
   },
-
   '/help/twitter': {
     view: 'support/twitter'
   },

@@ -28,7 +28,7 @@ jQuery.ajax '/user/links',
           .append($service_twitch)
           .append($service_twitter)
 
-      $profile = $('<li>').append $("<a href=\"/user/#{ data.id }\">")
+      $profile = $('<li>').append $("<a href=\"/profile/#{ data.id }\">")
         .text(' プロフィール')
         .prepend($ '<span class="glyphicon glyphicon-user">')
 

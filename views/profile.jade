@@ -1,0 +1,44 @@
+extends layout
+
+block script
+  script
+    :coffee
+      user_id = location.href.replace /^.+(\d+)$/, "$1"
+      jQuery.ajax
+        method: 'get'
+        url: '/user/' + user_id
+        success: (user) ->
+          $ ->
+            $('#username').text user.username
+            $('#catchphrase').text user.catchphrase
+            $('#self_introduction').text user.self_introduction
+            addServiceLink = (name, tag, url) ->
+              $li = $('<a>').addClass('list-group-item').attr('href', url)
+              $li.text ' ' + name
+              $li.prepend $('<small>').text(tag)
+              $('#services').append $li
+            addServiceLink 'はてなブログ', '日記', "//#{user.hatenablog}.hatenablog.com" if user.hatenablog? and user.hatenablog != ''
+            addServiceLink 'Zusaar', 'オフ会', "//www.zusaar.com/user/#{user.zusaar}" if user.zusaar? and user.zusaar != ''
+            addServiceLink 'Twitch', '生放送', "//ja.twitch.tv/#{user.twitch}" if user.twitch? and user.twitch != ''
+            addServiceLink 'Twitter', '一行宣伝', "//twitter.com/#{user.twitter}" if user.twitter? and user.twitter != ''
+            addServiceLink "Skype : #{user.skype}", 'その他', '#' if user.skype? and user.skype != ''
+            addServiceLink 'ニコニコ動画', 'その他', "//www.nicovideo.jp/user/#{user.nicovideo}" if user.nicovideo? and user.nicovideo > 0
+        error: ->
+          alert 'ユーザーデータを取得できません'
+
+block content
+  h2.page-header プロフィール
+  .row
+    .col-md-12.media.well
+      a.pull-left
+        img.user-icon.media-object
+      .media-body
+        h2.media-heading.hide-overflow
+          span#username
+          span  <small id="catchphrase"></small>
+  .row
+    .col-md-12
+      h3 自己紹介
+      p#self_introduction
+      h3 連携サービス
+      .list-group#services
