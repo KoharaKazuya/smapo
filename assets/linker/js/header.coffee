@@ -48,7 +48,7 @@ jQuery.ajax '/user/links',
           .prepend($('<span class="glyphicon glyphicon-question-sign">'))
           .append($('<b class="caret">')))
         .append $('<ul class="dropdown-menu">')
-          .append(li_a 'help/usage', 'このサイトについて')
+          .append(li_a '/help/usage', 'このサイトについて')
           .append($ '<li class="divider">')
           .append($link_hatenablog)
           .append($link_zusaar)
