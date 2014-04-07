@@ -7,20 +7,9 @@ xml2json = require 'xml2json'
 module.exports =
 
   hatenablog: (req, res) ->
-    externalApi req, res, 'hatenablog', 'http://___id___.hatenablog.com/feed', 5, (body) ->
-      json = xml2json.toJson body,
-        object: true
-        sanitize: false
-      return null unless json.feed? and json.feed.entry?
-      entries = json.feed.entry
-      entries = [entries] unless entries instanceof Array
-      _.map entries, (e) ->
-        return {
-          title: e.title
-          time: (new Date(e.published)).getTime()
-          link: e.link.href
-          summary: e.summary
-        }
+    followingUsers req, res, (users) ->
+      getHatenablogData res, users, (data) ->
+        res.json data
 
   zusaar: (req, res) ->
     followingUsers req, res, (users) ->
@@ -32,6 +21,62 @@ module.exports =
       getTwitchData res, users, (data) ->
         res.json data
 
+
+getHatenablogData = (res, users, callback) ->
+  queries = _.filter(_.map(users, (user) ->
+    service: 'hatenablog'
+    id: user.hatenablog
+    user_id: user.id
+  ), (q) -> q.id? and q.id !='')
+  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    return res.json { error: 'Database error' }, 500 if err
+
+    grouped = _.groupBy apis, (api) ->
+      if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
+        'caches'
+      else
+        'newRequests'
+    caches = grouped.caches
+    caches = [] unless caches?
+    newRequests = grouped.newRequests
+    newRequests = [] unless newRequests?
+
+    # generate access function
+    queries = _.map newRequests, (q) -> q
+    funcs = _.map newRequests, (u) ->
+      (callback) ->
+        query = queries.pop()
+        qStr = "http://#{ query.id }.hatenablog.com/feed"
+        console.log "new request!: #{qStr}"
+        request qStr, (err, response, body) ->
+          return callback err if err?
+          return callback null, null unless response.statusCode is 200
+          json = xml2json.toJson body,
+            object: true
+            sanitize: false
+          return null unless json.feed? and json.feed.entry?
+          entries = json.feed.entry
+          entries = [entries] unless entries instanceof Array
+          callback null, _.map entries, (e) ->
+            return {
+              user_id: query.user_id
+              title: e.title
+              time: e.published
+              link: e.link.href
+              summary: e.summary
+            }
+
+    # access all api in parallel
+    async.parallel funcs, (err, results) ->
+      return res.json err if err
+      # map entries by triming
+      entries = _.compact _.flatten results.concat _.map caches, (cache) -> JSON.parse cache.res
+      # sort entries and take [size]
+      res.json _.sortBy entries, (e) -> (new Date(e.time)).getTime()
+      # record in cache
+      for cache in newRequests
+        cache.res = JSON.stringify _.filter (_.compact _.flatten results), (entry) -> cache.user_id is entry.user_id
+        cache.save (err) -> null
 
 getZusaarData = (res, users, callback) ->
   ids = _.map users, (u) -> u.zusaar
@@ -157,35 +202,3 @@ followingUsers = (req, res, callback) ->
     User.find { 'or': query }, (err, users) ->
       return req.json { error: 'Database error' }, 500 if err
       callback(users)
-
-externalApi = (req, res, service, url, size, body2Entry) ->
-  return res.json { error: 'Must login' } unless req.session.user?
-  Follow.find { user_id: req.session.user }, (err, follows) ->
-    res.json { error: 'Database error' }, 500 if err
-    query = []
-    for follow in follows
-      query.push
-        id: follow.follow_id
-    User.find { 'or': query }, (err, users) ->
-      return req.json { error: 'Database error' }, 500 if err
-
-      # generate access function
-      users = _.filter users, (u) ->
-        u[service]? and u[service] != ''
-      funcs = _.map users, (u) ->
-        (callback) ->
-          user = users.pop()
-          request url.replace(/___id___/, user[service]), (err, response, body) ->
-            return callback err if err?
-            return callback null, null unless response.statusCode is 200
-            callback null, body2Entry(body)
-
-      # access all api in parallel
-      async.parallel funcs, (err, results) ->
-        return res.json err if err
-        # map entries by triming
-        entries = _.compact _.flatten results
-        # sort entries and take [size]
-        entries.sort (a, b) ->
-          b.time - a.time
-        res.json entries[0..size].reverse()
