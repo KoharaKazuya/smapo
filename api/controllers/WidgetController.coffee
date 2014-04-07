@@ -79,11 +79,11 @@ getHatenablogData = (res, users, callback) ->
         cache.save (err) -> null
 
 getZusaarData = (res, users, callback) ->
-  ids = _.map users, (u) -> u.zusaar
-  ids = _.filter ids, (id) -> id? and id != ''
-  queries = _.map ids, (id) ->
+  queries = _.filter(_.map(users, (user) ->
     service: 'zusaar'
-    id: id
+    id: user.zusaar
+    user_id: user.id
+  ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
 
@@ -139,11 +139,11 @@ getZusaarData = (res, users, callback) ->
       requestAndCallback(0, [])
 
 getTwitchData = (res, users, callback) ->
-  ids = _.map users, (u) -> u.twitch
-  ids = _.filter ids, (id) -> id? and id != ''
-  queries = _.map ids, (id) ->
+  queries = _.filter(_.map(users, (user) ->
     service: 'twitch'
-    id: id
+    id: user.twitch
+    user_id: user.id
+  ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
 
