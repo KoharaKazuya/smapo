@@ -54,13 +54,14 @@ getZusaarData = (res, users, callback) ->
 
     returnData = (curEvents) ->
       allEvents = curEvents.concat _.flatten _.map caches, (cache) -> JSON.parse cache.res
-      callback _.map allEvents, (event) ->
+      callback _.sortBy _.map allEvents, (event) ->
         return {
           title: event.title
           time: event.started_at
           link: event.event_url
           summary: event.description
         }
+      , (d) -> (new Date(d.time)).getTime()
 
     if newRequests.length is 0
       returnData []
