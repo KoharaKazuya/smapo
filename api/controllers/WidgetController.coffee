@@ -50,36 +50,42 @@ getZusaarData = (res, users, callback) ->
     caches = [] unless caches?
     newRequests = grouped.newRequests
     newRequests = [] unless newRequests?
-    console.log "cache hit: #{caches.length}"
-    console.log "new requests: #{newRequests.length}"
-    # request all users event
-    requestAndCallback = (offset, preEvents) ->
-      qStr = "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
-      request qStr, (err, response, body) ->
-        return res.json.err if err?
 
-        json = JSON.parse(body)
-        events = json.event
-        curEvents = preEvents.concat events
-        if json.results_returned is 100
-          # recursive call for over 100 events data
-          requestAndCallback offset + 100, curEvents
-        else
-          allEvents = curEvents.concat _.flatten _.map caches, (cache) -> JSON.parse cache.res
-          callback _.map allEvents, (event) ->
-            return {
-              title: event.title
-              time: event.started_at
-              link: event.event_url
-              summary: event.description
-            }
-          # record in cache
-          for owner_id, events of _.groupBy(allEvents, (event) -> event.owner_id)
-            cache = _.find apis, (api) -> (api.id is owner_id)
-            if cache?
-              cache.res = JSON.stringify events
-              cache.save (err) -> null
-    requestAndCallback(0, [])
+    returnData = (curEvents) ->
+      allEvents = curEvents.concat _.flatten _.map caches, (cache) -> JSON.parse cache.res
+      callback _.map allEvents, (event) ->
+        return {
+          title: event.title
+          time: event.started_at
+          link: event.event_url
+          summary: event.description
+        }
+
+    if newRequests.length is 0
+      returnData []
+    else
+      # request all users event
+      requestAndCallback = (offset, preEvents) ->
+        qStr = "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+        console.log "new request!: #{qStr}"
+        request qStr, (err, response, body) ->
+          return res.json.err if err?
+
+          json = JSON.parse(body)
+          events = json.event
+          curEvents = preEvents.concat events
+          if json.results_returned is 100
+            # recursive call for over 100 events data
+            requestAndCallback offset + 100, curEvents
+          else
+            returnData curEvents
+            # record in cache
+            for owner_id, events of _.groupBy(curEvents, (event) -> event.owner_id)
+              cache = _.find apis, (api) -> (api.id is owner_id)
+              if cache?
+                cache.res = JSON.stringify events
+                cache.save (err) -> null
+      requestAndCallback(0, [])
 
 getTwitchData = (res, users, callback) ->
   ids = _.map users, (u) -> u.twitch
@@ -99,34 +105,40 @@ getTwitchData = (res, users, callback) ->
     caches = [] unless caches?
     newRequests = grouped.newRequests
     newRequests = [] unless newRequests?
-    console.log "cache hit: #{caches.length}"
-    console.log "new requests: #{newRequests.length}"
-    # request all users stream
-    requestAndCallback = (offset, preStreams) ->
-      qStr = "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
-      request qStr, (err, response, body) ->
-        return res.json.err if err?
 
-        streams = JSON.parse(body).streams
-        curStreams = preStreams.concat streams
-        if streams.length is 100
-          # recursive call for over 100 streams data
-          requestAndCallback offset + 100, curStreams
-        else
-          allStreams = curStreams.concat _.map caches, (cache) -> JSON.parse cache.res
-          callback _.compact _.map allStreams, (stream) ->
-            return null unless stream? and stream.channel?
-            return {
-              title: stream.channel.status
-              game: stream.channel.game
-              link: stream.channel.url
-            }
-          # record in cache
-          for cache in apis
-            stream = _.find curStreams, (stream) -> cache.id is stream.channel.name
-            cache.res = JSON.stringify(if stream? then stream else {})
-            cache.save (err) -> null
-    requestAndCallback(0, [])
+    returnData = (curStreams) ->
+      allStreams = curStreams.concat _.map caches, (cache) -> JSON.parse cache.res
+      callback _.compact _.map allStreams, (stream) ->
+        return null unless stream? and stream.channel?
+        return {
+          title: stream.channel.status
+          game: stream.channel.game
+          link: stream.channel.url
+        }
+
+    if newRequests.length is 0
+      returnData []
+    else
+      # request all users stream
+      requestAndCallback = (offset, preStreams) ->
+        qStr = "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+        console.log "new request!: #{qStr}"
+        request qStr, (err, response, body) ->
+          return res.json.err if err?
+
+          streams = JSON.parse(body).streams
+          curStreams = preStreams.concat streams
+          if streams.length is 100
+            # recursive call for over 100 streams data
+            requestAndCallback offset + 100, curStreams
+          else
+            returnData curStreams
+            # record in cache
+            for cache in apis
+              stream = _.find curStreams, (stream) -> cache.id is stream.channel.name
+              cache.res = JSON.stringify(if stream? then stream else {})
+              cache.save (err) -> null
+      requestAndCallback(0, [])
 
 followingUsers = (req, res, callback) ->
   return res.json { error: 'Must login' } unless req.session.user?
