@@ -22,21 +22,64 @@ module.exports =
         }
 
   zusaar: (req, res) ->
-    externalApi req, res, 'zusaar', 'http://www.zusaar.com/api/event/?user_id=___id___&count=5', 5, (body) ->
-      json = JSON.parse body
-      _.map json.event, (e) ->
-        return {
-          title: e.title
-          time: (new Date(e.started_at)).getTime()
-          link: e.url
-          summary: e.description
-        }
+    followingUsers req, res, (users) ->
+      getZusaarData res, users, (data) ->
+        res.json data
 
   twitch: (req, res) ->
     followingUsers req, res, (users) ->
       getTwitchData res, users, (data) ->
         res.json data
 
+
+getZusaarData = (res, users, callback) ->
+  ids = _.map users, (u) -> u.zusaar
+  ids = _.filter ids, (id) -> id? and id != ''
+  queries = _.map ids, (id) ->
+    service: 'zusaar'
+    id: id
+  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    return res.json { error: 'Database error' }, 500 if err
+
+    grouped = _.groupBy apis, (api) ->
+      if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 10 * 60 * 1000  # 10min
+        'caches'
+      else
+        'newRequests'
+    caches = grouped.caches
+    caches = [] unless caches?
+    newRequests = grouped.newRequests
+    newRequests = [] unless newRequests?
+    console.log "cache hit: #{caches.length}"
+    console.log "new requests: #{newRequests.length}"
+    # request all users event
+    requestAndCallback = (offset, preEvents) ->
+      qStr = "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+      request qStr, (err, response, body) ->
+        return res.json.err if err?
+
+        json = JSON.parse(body)
+        events = json.event
+        curEvents = preEvents.concat events
+        if json.results_returned is 100
+          # recursive call for over 100 events data
+          requestAndCallback offset + 100, curEvents
+        else
+          allEvents = curEvents.concat _.map caches, (cache) -> JSON.parse cache.res
+          callback _.map allEvents, (event) ->
+            return {
+              title: event.title
+              time: event.started_at
+              link: event.event_url
+              summary: event.description
+            }
+        # record in cache
+        for event in events
+          cache = _.find apis, (api) -> (api.id is event.owner_id)
+          if cache?
+            cache.res = JSON.stringify event
+            cache.save (err) -> null
+    requestAndCallback(0, [])
 
 getTwitchData = (res, users, callback) ->
   ids = _.map users, (u) -> u.twitch
