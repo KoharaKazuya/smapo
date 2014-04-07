@@ -1,3 +1,4 @@
+require 'date-utils'
 _ = require 'underscore'
 request = require 'request'
 async = require 'async'
@@ -66,7 +67,12 @@ getZusaarData = (res, users, callback) ->
     else
       # request all users event
       requestAndCallback = (offset, preEvents) ->
-        qStr = "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+        today = Date.today()
+        prevMonth = Date.today()
+        prevMonth.addMonths -1
+        nextMonth = Date.today()
+        nextMonth.addMonths 1
+        qStr = "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&ym=#{ (mon.toFormat 'YYYYMM' for mon in [prevMonth, today, nextMonth]).join ',' }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
         console.log "new request!: #{qStr}"
         request qStr, (err, response, body) ->
           return res.json.err if err?

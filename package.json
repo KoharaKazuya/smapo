@@ -14,7 +14,8 @@
     "async": "~0.6.2",
     "request": "~2.34.0",
     "xml2json": "~0.4.0",
-    "underscore": "~1.6.0"
+    "underscore": "~1.6.0",
+    "date-utils": "~1.2.15"
   },
   "scripts": {
     "start": "node app.js",
