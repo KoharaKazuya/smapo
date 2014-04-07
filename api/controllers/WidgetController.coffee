@@ -33,17 +33,71 @@ module.exports =
         }
 
   twitch: (req, res) ->
-    externalApi req, res, 'twitch', 'https://api.twitch.tv/kraken/streams/___id___', 5, (body) ->
-      json = JSON.parse body
-      return null unless json.stream? and json.stream.channel?
-      channel = json.stream.channel
-      return {
-        title: channel.status
-        game: channel.game
-        link: channel.url
-        time: 0
-      }
+    followingUsers req, res, (users) ->
+      getTwitchData res, users, (data) ->
+        res.json data
 
+
+getTwitchData = (res, users, callback) ->
+  ids = _.map users, (u) -> u.twitch
+  ids = _.filter ids, (id) -> id? and id != ''
+  queries = _.map ids, (id) ->
+    service: 'twitch'
+    id: id
+  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    return res.json { error: 'Database error' }, 500 if err
+
+    grouped = _.groupBy apis, (api) ->
+      if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
+        'caches'
+      else
+        'newRequests'
+    caches = grouped.caches
+    caches = [] unless caches?
+    newRequests = grouped.newRequests
+    newRequests = [] unless newRequests?
+    console.log "cache hit: #{caches.length}"
+    console.log "new requests: #{newRequests.length}"
+    # generate queries for each 100 users
+    queries = _.map [0..((newRequests.length-1)/100)], (index) ->
+      # pop 100 users
+      requests = newRequests[0...100]
+      newRequests = newRequests[100...]
+      (callback) ->
+        qStr = 'https://api.twitch.tv/kraken/streams?limit=100&channel=' + (_.map requests, (r) -> r.id ).join ','
+        request qStr, (err, response, body) ->
+          return callback err if err?
+          return callback null, null unless response.statusCode is 200
+          streams = JSON.parse(body).streams
+          # record in cache
+          for stream in streams
+            cache = _.find apis, (api) -> (api.id is stream.channel.name)
+            if cache?
+              cache.res = JSON.stringify stream
+              cache.save (err) -> null
+          callback null, streams
+    async.parallel queries, (err, results) ->
+      return res.json err if err
+      streams = (_.compact _.flatten results).concat _.map caches, (cache) -> JSON.parse cache.res
+      callback _.compact _.map streams, (stream) ->
+        return null unless stream? and stream.channel?
+        return {
+          title: stream.channel.status
+          game: stream.channel.game
+          link: stream.channel.url
+        }
+
+followingUsers = (req, res, callback) ->
+  return res.json { error: 'Must login' } unless req.session.user?
+  Follow.find { user_id: req.session.user }, (err, follows) ->
+    res.json { error: 'Database error' }, 500 if err
+    query = []
+    for follow in follows
+      query.push
+        id: follow.follow_id
+    User.find { 'or': query }, (err, users) ->
+      return req.json { error: 'Database error' }, 500 if err
+      callback(users)
 
 externalApi = (req, res, service, url, size, body2Entry) ->
   return res.json { error: 'Must login' } unless req.session.user?
