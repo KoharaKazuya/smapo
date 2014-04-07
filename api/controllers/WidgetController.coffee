@@ -58,34 +58,33 @@ getTwitchData = (res, users, callback) ->
     newRequests = [] unless newRequests?
     console.log "cache hit: #{caches.length}"
     console.log "new requests: #{newRequests.length}"
-    # generate queries for each 100 users
-    queries = _.map [0..((newRequests.length-1)/100)], (index) ->
-      # pop 100 users
-      requests = newRequests[0...100]
-      newRequests = newRequests[100...]
-      (callback) ->
-        qStr = 'https://api.twitch.tv/kraken/streams?limit=100&channel=' + (_.map requests, (r) -> r.id ).join ','
-        request qStr, (err, response, body) ->
-          return callback err if err?
-          return callback null, null unless response.statusCode is 200
-          streams = JSON.parse(body).streams
-          # record in cache
-          for stream in streams
-            cache = _.find apis, (api) -> (api.id is stream.channel.name)
-            if cache?
-              cache.res = JSON.stringify stream
-              cache.save (err) -> null
-          callback null, streams
-    async.parallel queries, (err, results) ->
-      return res.json err if err
-      streams = (_.compact _.flatten results).concat _.map caches, (cache) -> JSON.parse cache.res
-      callback _.compact _.map streams, (stream) ->
-        return null unless stream? and stream.channel?
-        return {
-          title: stream.channel.status
-          game: stream.channel.game
-          link: stream.channel.url
-        }
+    # request all users stream
+    requestAndCallback = (offset, preStreams) ->
+      qStr = "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+      request qStr, (err, response, body) ->
+        return res.json.err if err?
+
+        streams = JSON.parse(body).streams
+        curStreams = preStreams.concat streams
+        if streams.length is 100
+          # recursive call for over 100 streams data
+          requestAndCallback offset + 100, curStreams
+        else
+          allStreams = curStreams.concat _.map caches, (cache) -> JSON.parse cache.res
+          callback _.compact _.map allStreams, (stream) ->
+            return null unless stream? and stream.channel?
+            return {
+              title: stream.channel.status
+              game: stream.channel.game
+              link: stream.channel.url
+            }
+        # record in cache
+        for stream in streams
+          cache = _.find apis, (api) -> (api.id is stream.channel.name)
+          if cache?
+            cache.res = JSON.stringify stream
+            cache.save (err) -> null
+    requestAndCallback(0, [])
 
 followingUsers = (req, res, callback) ->
   return res.json { error: 'Must login' } unless req.session.user?
