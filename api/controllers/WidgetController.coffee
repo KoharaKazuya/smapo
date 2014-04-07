@@ -99,14 +99,7 @@ getZusaarData = (res, users, callback) ->
 
     returnData = (curEvents) ->
       allEvents = curEvents.concat _.flatten _.map caches, (cache) -> cache.res
-      callback _.sortBy _.map allEvents, (event) ->
-        return {
-          title: event.title
-          time: event.started_at
-          link: event.event_url
-          summary: event.description
-        }
-      , (d) -> (new Date(d.time)).getTime()
+      callback _.sortBy allEvents, (e) -> (new Date(e.time)).getTime()
 
     if newRequests.length is 0
       returnData []
@@ -124,7 +117,12 @@ getZusaarData = (res, users, callback) ->
           return res.json.err if err?
 
           json = JSON.parse(body)
-          events = json.event
+          events = _.map json.event, (event) ->
+            user_id: (_.find newRequests, (r) -> r.id is event.owner_id).user_id
+            title: event.title
+            time: event.started_at
+            link: event.event_url
+            summary: event.description
           curEvents = preEvents.concat events
           if json.results_returned is 100
             # recursive call for over 100 events data
@@ -133,8 +131,7 @@ getZusaarData = (res, users, callback) ->
             returnData curEvents
             # record in cache
             for cache in newRequests
-              events = _.filter (_.flatten curEvents), (event) -> cache.id is event.owner_id
-              cache.res = events
+              cache.res = _.filter curEvents, (event) -> cache.user_id is event.user_id
               cache.save (err) -> null
       requestAndCallback(0, [])
 
@@ -158,14 +155,8 @@ getTwitchData = (res, users, callback) ->
     newRequests = [] unless newRequests?
 
     returnData = (curStreams) ->
-      allStreams = curStreams.concat _.map caches, (cache) -> cache.res
-      callback _.compact _.map allStreams, (stream) ->
-        return null unless stream? and stream.channel?
-        return {
-          title: stream.channel.status
-          game: stream.channel.game
-          link: stream.channel.url
-        }
+      allStreams = curStreams.concat _.compact _.map caches, (cache) -> cache.res
+      callback allStreams
 
     if newRequests.length is 0
       returnData []
@@ -177,7 +168,14 @@ getTwitchData = (res, users, callback) ->
         request qStr, (err, response, body) ->
           return res.json.err if err?
 
-          streams = JSON.parse(body).streams
+          streams = _.compact _.map JSON.parse(body).streams, (stream) ->
+            return null unless stream? and stream.channel?
+            return {
+              user_id: (_.find newRequests, (r) -> r.id is stream.channel.name).user_id
+              title: stream.channel.status
+              game: stream.channel.game
+              link: stream.channel.url
+            }
           curStreams = preStreams.concat streams
           if streams.length is 100
             # recursive call for over 100 streams data
@@ -186,8 +184,8 @@ getTwitchData = (res, users, callback) ->
             returnData curStreams
             # record in cache
             for cache in newRequests
-              stream = _.find curStreams, (stream) -> cache.id is stream.channel.name
-              cache.res = if stream? then stream else {}
+              stream = _.find curStreams, (stream) -> cache.user_id is stream.user_id
+              cache.res = if stream? then stream else null
               cache.save (err) -> null
       requestAndCallback(0, [])
 
