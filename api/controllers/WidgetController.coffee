@@ -65,7 +65,7 @@ getZusaarData = (res, users, callback) ->
           # recursive call for over 100 events data
           requestAndCallback offset + 100, curEvents
         else
-          allEvents = curEvents.concat _.map caches, (cache) -> JSON.parse cache.res
+          allEvents = curEvents.concat _.flatten _.map caches, (cache) -> JSON.parse cache.res
           callback _.map allEvents, (event) ->
             return {
               title: event.title
@@ -73,12 +73,12 @@ getZusaarData = (res, users, callback) ->
               link: event.event_url
               summary: event.description
             }
-        # record in cache
-        for event in events
-          cache = _.find apis, (api) -> (api.id is event.owner_id)
-          if cache?
-            cache.res = JSON.stringify event
-            cache.save (err) -> null
+          # record in cache
+          for owner_id, events of _.groupBy(allEvents, (event) -> event.owner_id)
+            cache = _.find apis, (api) -> (api.id is owner_id)
+            if cache?
+              cache.res = JSON.stringify events
+              cache.save (err) -> null
     requestAndCallback(0, [])
 
 getTwitchData = (res, users, callback) ->
@@ -121,11 +121,10 @@ getTwitchData = (res, users, callback) ->
               game: stream.channel.game
               link: stream.channel.url
             }
-        # record in cache
-        for stream in streams
-          cache = _.find apis, (api) -> (api.id is stream.channel.name)
-          if cache?
-            cache.res = JSON.stringify stream
+          # record in cache
+          for cache in apis
+            stream = _.find curStreams, (stream) -> cache.id is stream.channel.name
+            cache.res = JSON.stringify(if stream? then stream else {})
             cache.save (err) -> null
     requestAndCallback(0, [])
 
