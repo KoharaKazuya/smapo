@@ -132,7 +132,7 @@ getZusaarData = (res, users, callback) ->
           else
             returnData curEvents
             # record in cache
-            for cache in apis
+            for cache in newRequests
               events = _.filter (_.flatten curEvents), (event) -> cache.id is event.owner_id
               cache.res = JSON.stringify events
               cache.save (err) -> null
@@ -185,7 +185,7 @@ getTwitchData = (res, users, callback) ->
           else
             returnData curStreams
             # record in cache
-            for cache in apis
+            for cache in newRequests
               stream = _.find curStreams, (stream) -> cache.id is stream.channel.name
               cache.res = JSON.stringify(if stream? then stream else {})
               cache.save (err) -> null
