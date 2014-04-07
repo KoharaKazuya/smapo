@@ -70,12 +70,12 @@ getHatenablogData = (res, users, callback) ->
     async.parallel funcs, (err, results) ->
       return res.json err if err
       # map entries by triming
-      entries = _.compact _.flatten results.concat _.map caches, (cache) -> JSON.parse cache.res
+      entries = _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # sort entries and take [size]
       res.json _.sortBy entries, (e) -> (new Date(e.time)).getTime()
       # record in cache
       for cache in newRequests
-        cache.res = JSON.stringify _.filter (_.compact _.flatten results), (entry) -> cache.user_id is entry.user_id
+        cache.res = _.filter (_.compact _.flatten results), (entry) -> cache.user_id is entry.user_id
         cache.save (err) -> null
 
 getZusaarData = (res, users, callback) ->
@@ -98,7 +98,7 @@ getZusaarData = (res, users, callback) ->
     newRequests = [] unless newRequests?
 
     returnData = (curEvents) ->
-      allEvents = curEvents.concat _.flatten _.map caches, (cache) -> JSON.parse cache.res
+      allEvents = curEvents.concat _.flatten _.map caches, (cache) -> cache.res
       callback _.sortBy _.map allEvents, (event) ->
         return {
           title: event.title
@@ -134,7 +134,7 @@ getZusaarData = (res, users, callback) ->
             # record in cache
             for cache in newRequests
               events = _.filter (_.flatten curEvents), (event) -> cache.id is event.owner_id
-              cache.res = JSON.stringify events
+              cache.res = events
               cache.save (err) -> null
       requestAndCallback(0, [])
 
@@ -158,7 +158,7 @@ getTwitchData = (res, users, callback) ->
     newRequests = [] unless newRequests?
 
     returnData = (curStreams) ->
-      allStreams = curStreams.concat _.map caches, (cache) -> JSON.parse cache.res
+      allStreams = curStreams.concat _.map caches, (cache) -> cache.res
       callback _.compact _.map allStreams, (stream) ->
         return null unless stream? and stream.channel?
         return {
@@ -187,7 +187,7 @@ getTwitchData = (res, users, callback) ->
             # record in cache
             for cache in newRequests
               stream = _.find curStreams, (stream) -> cache.id is stream.channel.name
-              cache.res = JSON.stringify(if stream? then stream else {})
+              cache.res = if stream? then stream else {}
               cache.save (err) -> null
       requestAndCallback(0, [])
 

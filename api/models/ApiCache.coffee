@@ -10,4 +10,4 @@ module.exports =
       type: 'string'
       required: true
     res:
-      type: 'text'
+      type: 'json'
