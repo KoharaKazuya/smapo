@@ -38,7 +38,7 @@ getHatenablogData = (res, users, callback) ->
     return res.json { error: 'Database error' }, 500 if err
 
     grouped = _.groupBy apis, (api) ->
-      if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
+      if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
         'caches'
       else
         'newRequests'
@@ -94,7 +94,7 @@ getZusaarData = (res, users, callback) ->
     return res.json { error: 'Database error' }, 500 if err
 
     grouped = _.groupBy apis, (api) ->
-      if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 10 * 60 * 1000  # 10min
+      if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 10 * 60 * 1000  # 10min
         'caches'
       else
         'newRequests'
@@ -151,7 +151,7 @@ getTwitchData = (res, users, callback) ->
     return res.json { error: 'Database error' }, 500 if err
 
     grouped = _.groupBy apis, (api) ->
-      if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
+      if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
         'caches'
       else
         'newRequests'
@@ -203,7 +203,7 @@ getTwitterData = (res, users, callback) ->
   ApiCache.findOrCreate query, query, (err, api) ->
     return res.json { error: 'Database error' }, 500 if err
 
-    if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
+    if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
       callback api.res
     else
       console.log "new request!: Twitter"
