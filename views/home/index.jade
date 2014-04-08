@@ -56,7 +56,7 @@ block script
           $li.append $('<h5>')
             .append($('<small>')
               .text(displayTime + ' ')
-              .append($('<a>').attr('href', "/user/#{entry.user_id}").text('todo user name ')))
+              .append($('<a>').attr('href', "/profile/#{entry.user_id}").text('todo user name ')))
             .append($('<a>').text(entry.message))
           $ul.prepend $li
 
