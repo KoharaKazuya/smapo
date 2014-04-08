@@ -66,6 +66,7 @@ getHatenablogData = (res, users, callback) ->
           callback null, _.map entries, (e) ->
             return {
               user_id: query.user.id
+              user_icon: query.user.icon
               title: e.title
               time: e.published
               link: e.link.href
@@ -124,11 +125,15 @@ getZusaarData = (res, users, callback) ->
 
           json = JSON.parse(body)
           events = _.map json.event, (event) ->
-            user_id: (_.find newRequests, (r) -> r.id is event.owner_id).user.id
-            title: event.title
-            time: event.started_at
-            link: event.event_url
-            summary: event.description
+            user = (_.find newRequests, (r) -> r.id is event.owner_id).user
+            return {
+              user_id: user.id
+              user_icon: user.icon
+              title: event.title
+              time: event.started_at
+              link: event.event_url
+              summary: event.description
+            }
           curEvents = preEvents.concat events
           if json.results_returned is 100
             # recursive call for over 100 events data
@@ -176,8 +181,10 @@ getTwitchData = (res, users, callback) ->
 
           streams = _.compact _.map JSON.parse(body).streams, (stream) ->
             return null unless stream? and stream.channel?
+            user = (_.find newRequests, (r) -> r.id is stream.channel.name).user
             return {
-              user_id: (_.find newRequests, (r) -> r.id is stream.channel.name).user.id
+              user_id: user.id
+              user_icon: user.icon
               title: stream.channel.status
               game: stream.channel.game
               link: stream.channel.url
@@ -214,6 +221,7 @@ getTwitterData = (res, users, callback) ->
           return null unless user?
           return {
             user_id: user.id
+            username: user.username
             time: tweet.created_at
             message: tweet.text.replace /^@ssbportal_flash /, ''
             link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id }"

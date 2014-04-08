@@ -7,7 +7,7 @@ block script
         $ul = $('#blog ul')
         for entry in entries
           $li = $('<li>')
-          $li.append $('<a>').append($('<img>').addClass('user-icon'))
+          $li.append $('<a>').append($('<img>').addClass('user-icon').attr('src', entry.user_icon)).attr('href', '/profile/' + entry.user_id)
           date = new Date(entry.time)
           $li.append $('<a>').attr('href', entry.link).append(
             $('<h5>').text(' ' + entry.title).prepend($('<small>').text("#{date.getMonth() + 1}/#{date.getDate()}"))
@@ -19,7 +19,7 @@ block script
         $ul = $('#event ul')
         for entry in entries
           $li = $('<li>')
-          $li.append $('<a>').append($('<img>').addClass('user-icon'))
+          $li.append $('<a>').append($('<img>').addClass('user-icon').attr('src', entry.user_icon)).attr('href', '/profile/' + entry.user_id)
           date = new Date(entry.time)
           $li.append $('<a>').attr('href', entry.link).append(
             $('<h5>').text(' ' + entry.title).prepend($('<small>').text("#{date.getMonth() + 1}/#{date.getDate()}"))
@@ -31,7 +31,7 @@ block script
         $ul = $('#live ul')
         for entry in entries
           $li = $('<li>')
-          $li.append $('<a>').append($('<img>').addClass('user-icon'))
+          $li.append $('<a>').append($('<img>').addClass('user-icon').attr('src', entry.user_icon)).attr('href', '/profile/' + entry.user_id)
           date = new Date(entry.time)
           $li.append $('<a>').attr('href', entry.link).append(
             $('<h5>').text(' ' + entry.title).prepend($('<small>').text(entry.game))
@@ -56,8 +56,8 @@ block script
           $li.append $('<h5>')
             .append($('<small>')
               .text(displayTime + ' ')
-              .append($('<a>').attr('href', "/profile/#{entry.user_id}").text('todo user name ')))
-            .append($('<a>').text(entry.message))
+              .append($('<a>').attr('href', "/profile/#{entry.user_id}").text(entry.username + ' ')))
+            .append($('<a>').text(entry.message).attr('href', entry.link))
           $ul.prepend $li
 
 block content
