@@ -1,9 +1,8 @@
 module.exports =
 
   attributes:
-    user_id:
-      type: 'integer'
-      required: true
+    user:
+      type: 'json'
     service:
       type: 'string'
       required: true

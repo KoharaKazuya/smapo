@@ -32,7 +32,7 @@ getHatenablogData = (res, users, callback) ->
   queries = _.filter(_.map(users, (user) ->
     service: 'hatenablog'
     id: user.hatenablog
-    user_id: user.id
+    user: user
   ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
@@ -65,7 +65,7 @@ getHatenablogData = (res, users, callback) ->
           entries = [entries] unless entries instanceof Array
           callback null, _.map entries, (e) ->
             return {
-              user_id: query.user_id
+              user_id: query.user.id
               title: e.title
               time: e.published
               link: e.link.href
@@ -81,14 +81,14 @@ getHatenablogData = (res, users, callback) ->
       res.json _.sortBy entries, (e) -> (new Date(e.time)).getTime()
       # record in cache
       for cache in newRequests
-        cache.res = _.filter (_.compact _.flatten results), (entry) -> cache.user_id is entry.user_id
+        cache.res = _.filter (_.compact _.flatten results), (entry) -> cache.user.id is entry.user_id
         cache.save (err) -> null
 
 getZusaarData = (res, users, callback) ->
   queries = _.filter(_.map(users, (user) ->
     service: 'zusaar'
     id: user.zusaar
-    user_id: user.id
+    user: user
   ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
@@ -124,7 +124,7 @@ getZusaarData = (res, users, callback) ->
 
           json = JSON.parse(body)
           events = _.map json.event, (event) ->
-            user_id: (_.find newRequests, (r) -> r.id is event.owner_id).user_id
+            user_id: (_.find newRequests, (r) -> r.id is event.owner_id).user.id
             title: event.title
             time: event.started_at
             link: event.event_url
@@ -137,7 +137,7 @@ getZusaarData = (res, users, callback) ->
             returnData curEvents
             # record in cache
             for cache in newRequests
-              cache.res = _.filter curEvents, (event) -> cache.user_id is event.user_id
+              cache.res = _.filter curEvents, (event) -> cache.user.id is event.user_id
               cache.save (err) -> null
       requestAndCallback(0, [])
 
@@ -145,7 +145,7 @@ getTwitchData = (res, users, callback) ->
   queries = _.filter(_.map(users, (user) ->
     service: 'twitch'
     id: user.twitch
-    user_id: user.id
+    user: user
   ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
@@ -177,7 +177,7 @@ getTwitchData = (res, users, callback) ->
           streams = _.compact _.map JSON.parse(body).streams, (stream) ->
             return null unless stream? and stream.channel?
             return {
-              user_id: (_.find newRequests, (r) -> r.id is stream.channel.name).user_id
+              user_id: (_.find newRequests, (r) -> r.id is stream.channel.name).user.id
               title: stream.channel.status
               game: stream.channel.game
               link: stream.channel.url
@@ -190,7 +190,7 @@ getTwitchData = (res, users, callback) ->
             returnData curStreams
             # record in cache
             for cache in newRequests
-              stream = _.find curStreams, (stream) -> cache.user_id is stream.user_id
+              stream = _.find curStreams, (stream) -> cache.user.id is stream.user_id
               cache.res = if stream? then stream else null
               cache.save (err) -> null
       requestAndCallback(0, [])
@@ -199,7 +199,6 @@ getTwitterData = (res, users, callback) ->
   query =
     service: 'twitter'
     id: 'ssbportal_flash'
-    user_id: 0
   ApiCache.findOrCreate query, query, (err, api) ->
     return res.json { error: 'Database error' }, 500 if err
 
