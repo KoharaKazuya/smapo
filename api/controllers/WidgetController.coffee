@@ -3,6 +3,7 @@ _ = require 'underscore'
 request = require 'request'
 async = require 'async'
 xml2json = require 'xml2json'
+Twitter = require 'twit'
 
 module.exports =
 
@@ -19,6 +20,11 @@ module.exports =
   twitch: (req, res) ->
     followingUsers req, res, (users) ->
       getTwitchData res, users, (data) ->
+        res.json data
+
+  twitter: (req, res) ->
+    followingUsers req, res, (users) ->
+      getTwitterData res, users, (data) ->
         res.json data
 
 
@@ -189,6 +195,37 @@ getTwitchData = (res, users, callback) ->
               cache.save (err) -> null
       requestAndCallback(0, [])
 
+getTwitterData = (res, users, callback) ->
+  query =
+    service: 'twitter'
+    id: 'ssbportal_flash'
+    user_id: 0
+  ApiCache.findOrCreate ['service'], query, (err, api) ->
+    return res.json { error: 'Database error' }, 500 if err
+
+    if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
+      callback api.res
+    else
+      console.log "new request!: Twitter"
+      twitter.get '/statuses/mentions_timeline', { count: 200 }, (err, tweets, response) ->
+        return res.json { error: 'Twitter error' }, 500 if err
+
+        data = _.compact _.map tweets, (tweet) ->
+          user = _.find users, (u) -> u.twitter is tweet.user.screen_name
+          return null unless user?
+          return {
+            user_id: user.id
+            time: tweet.created_at
+            message: tweet.text.replace /^@ssbportal_flash /, ''
+            link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id }"
+          }
+
+        callback data
+
+        # record in cache
+        api.res = data
+        api.save (err) -> null
+
 followingUsers = (req, res, callback) ->
   return res.json { error: 'Must login' } unless req.session.user?
   Follow.find { user_id: req.session.user }, (err, follows) ->
@@ -200,3 +237,9 @@ followingUsers = (req, res, callback) ->
     User.find { 'or': query }, (err, users) ->
       return req.json { error: 'Database error' }, 500 if err
       callback(users)
+
+twitter = new Twitter
+  consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token: process.env.TWITTER_ACCESS_TOKEN,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
