@@ -200,7 +200,7 @@ getTwitterData = (res, users, callback) ->
     service: 'twitter'
     id: 'ssbportal_flash'
     user_id: 0
-  ApiCache.findOrCreate ['service'], query, (err, api) ->
+  ApiCache.findOrCreate query, query, (err, api) ->
     return res.json { error: 'Database error' }, 500 if err
 
     if api.res? and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
