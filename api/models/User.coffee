@@ -34,7 +34,8 @@ module.exports =
       type: 'text'
       maxLength: 10000
     icon:
-      type: 'binary'
+      type: 'string'
+      maxLength: 1000
     catchphrase:
       type: 'string'
       maxLength: 100

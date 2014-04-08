@@ -13,6 +13,8 @@ block script
             $('#username').text user.username
             $('#catchphrase').text user.catchphrase
             $('#self_introduction').html marked(user.self_introduction or '', { sanitize: true })
+            $('#user-icon-link').attr 'href', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
+            $('#user-icon-img').attr 'src', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
             addServiceLink = (name, tag, url) ->
               $li = $('<a>').addClass('list-group-item').attr('href', url)
               $li.text ' ' + name
@@ -60,8 +62,8 @@ block content
   h2.page-header プロフィール
   .row
     .col-md-12.media.well
-      a.pull-left
-        img.user-icon.media-object
+      a.pull-left#user-icon-link
+        img.user-icon.media-object#user-icon-img
       .media-body
         h2.media-heading.hide-overflow
           span#username

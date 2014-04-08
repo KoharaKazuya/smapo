@@ -12,10 +12,10 @@ block script
         url: '/user/' + user_id
         success: (user) ->
           $ ->
-            $('#user-icon-link').attr 'href', user.icon
-            $('#user-icon-img').attr 'src', user.icon
+            $('#user-icon-link').attr 'href', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
+            $('#user-icon-img').attr 'src', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
             $('#username').text user.username
-            for name in ['catchphrase', 'self_introduction']
+            for name in ['catchphrase', 'self_introduction', 'icon']
               form_old_input name, user
         error: ->
           alert 'ユーザーデータを取得できません'
@@ -44,9 +44,9 @@ block content
           .col-md-9
             textarea.form-control#self_introduction(name='self_introduction', maxlength=10000, rows=5, placeholder='自己紹介文には Markdown が利用できます')
         .form-group
-          label.col-md-3.control-label(for='icon') アイコン画像 <span class="glyphicon glyphicon-question-sign" data-toggle="popover" data-placement="left" data-title="画像サイズについて" data-content="最大 64x64 にリサイズされます"></span>
+          label.col-md-3.control-label(for='icon') アイコン画像 URL
           .col-md-9
-            input.form-control#icon(type='file', name='icon')
+            input.form-control#icon(name='icon', placeholder='アイコン画像の URL')
         .form-group
           label.col-md-offset-3.col-md-9
             input.btn.btn-primary(type='submit', value='変更')
