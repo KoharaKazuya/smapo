@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   h2.page-header アカウント作成
-  form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-url='/user', data-method='post', data-redirect='/')
+  form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-url='/user', data-method='post', data-redirect='/support/getnoemail')
     input(type='hidden', name='_csrf', value='#{ _csrf }')
     fieldset
       .form-group
