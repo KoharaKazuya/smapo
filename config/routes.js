@@ -88,6 +88,12 @@ module.exports.routes = {
   '/support/getnoemail': {
     view: 'support/getnoemail'
   },
+  '/support/forgotpassword': {
+    view: 'support/forgotpassword'
+  },
+  '/support/resetpassword': {
+    view: 'support/resetpassword'
+  },
 
   /*
   // But what if you want your home page to display

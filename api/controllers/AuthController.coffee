@@ -86,3 +86,31 @@ module.exports =
             return res.json json
       else
         return res.json { error: 'user not found' }, 404
+
+  forgotpassword: (req, res) ->
+    User.findOne { email: req.query.email }, (err, user) ->
+      return res.json { error: 'Database error' }, 500 if err
+
+      if user?
+        bcrypt.hash user.password + sails.config.session.secret, 8, (err, hash) ->
+          return res.json { error: 'bcrypt error' }, 500 if err
+
+          resetUrl = "http://ssbp.info/support/resetpassword"
+          sendgrid.send
+            to: user.email
+            from: 'noreply@ssbp.info'
+            fromname: sails.config.appName
+            subject: 'パスワードのリセット'
+            html: """
+            <p>こんにちは、 #{ user.username } さん！</p>
+            <p><a href="http://ssbp.info">スマブラポータル</a>です。</p>
+            <p>#{ user.username } さんのパスワードのリセットが要求されました。<br>
+            リセットするためには、以下の URL をクリックしてください。<br>
+            次のページから確認コードに <strong><code>#{ hash }</code></strong> を入力して下さい。</p>
+            <p><a href="#{ resetUrl }">#{ resetUrl }</a></p>
+            """
+          , (err, json) ->
+            return res.json { error: 'mail error' }, 500 if err
+            return res.json json
+      else
+        return res.json { error: 'user not found' }, 404
