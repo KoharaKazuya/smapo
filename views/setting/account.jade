@@ -46,7 +46,13 @@ block content
           .form-group
             label.col-md-3.control-label メールアドレス
             .col-md-9
-              p.form-control-static#email
+              p.form-control-static#email 表示されません
+          .form-group
+            label.col-md-3.control-label パスワード
+            .col-md-9
+              p.form-control-static#password
+                | 表示されません
+                a(href='/support/forgotpassword') (リセットはこちらから)
 
       form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-method='delete', data-redirect='/')
         input(type='hidden', name='_csrf', value='#{ _csrf }')
