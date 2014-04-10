@@ -53,7 +53,6 @@ getHatenablogData = (res, users, callback) ->
       (callback) ->
         query = queries.pop()
         qStr = "http://#{ query.id }.hatenablog.com/feed"
-        console.log "new request!: #{qStr}"
         request qStr, (err, response, body) ->
           return callback err if err?
           return callback null, null unless response.statusCode is 200
@@ -119,7 +118,6 @@ getZusaarData = (res, users, callback) ->
         nextMonth = Date.today()
         nextMonth.addMonths 1
         qStr = "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&ym=#{ (mon.toFormat 'YYYYMM' for mon in [prevMonth, today, nextMonth]).join ',' }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
-        console.log "new request!: #{qStr}"
         request qStr, (err, response, body) ->
           return res.json.err if err?
 
@@ -175,7 +173,6 @@ getTwitchData = (res, users, callback) ->
       # request all users stream
       requestAndCallback = (offset, preStreams) ->
         qStr = "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
-        console.log "new request!: #{qStr}"
         request qStr, (err, response, body) ->
           return res.json.err if err?
 
@@ -212,7 +209,6 @@ getTwitterData = (res, users, callback) ->
     if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
       callback api.res
     else
-      console.log "new request!: Twitter"
       twitter.get '/statuses/mentions_timeline', { count: 200 }, (err, tweets, response) ->
         return res.json { error: 'Twitter error' }, 500 if err
 
