@@ -3,7 +3,11 @@ extends ../layout
 block script
   script
     :coffee
-      return location.href = '/hello' unless $.cookie('user_id')?
+      if $.cookie('user_id')?
+        jQuery.get '/follow?user_id=' + $.cookie('user_id'), (follows) ->
+          location.href = '/help/usage' if follows.length is 0
+      else
+        return location.href = '/hello'
 
       jQuery.get '/widget/hatenablog', (entries) ->
         $ul = $('#blog ul')
