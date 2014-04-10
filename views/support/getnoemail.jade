@@ -2,7 +2,9 @@ extends ../layout
 
 block content
   h2.page-header 確認メールを送る
-  form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-url='/auth/confirmationmail', data-redirect='/')
+  p ログインできるようにするためには、確認メールを受け取る必要があります。
+  p 確認メールが届かない場合は迷惑メール/スパム扱いとなっていないか確認して下さい。
+  form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-url='/auth/confirmationmail')
     input(type='hidden', name='_csrf', value='#{ _csrf }')
     fieldset
       .form-group
