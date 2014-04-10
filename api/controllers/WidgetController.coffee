@@ -10,22 +10,30 @@ module.exports =
   hatenablog: (req, res) ->
     followingUsers req, res, (users) ->
       getHatenablogData res, users, (data) ->
-        res.json data
+        count = req.query.count
+        count = 100 if not count? or count > 100
+        return res.json data[0...count]
 
   zusaar: (req, res) ->
     followingUsers req, res, (users) ->
       getZusaarData res, users, (data) ->
-        res.json data
+        count = req.query.count
+        count = 100 if not count? or count > 100
+        return res.json data[0...count]
 
   twitch: (req, res) ->
     followingUsers req, res, (users) ->
       getTwitchData res, users, (data) ->
-        res.json data
+        count = req.query.count
+        count = 100 if not count? or count > 100
+        return res.json data[0...count]
 
   twitter: (req, res) ->
     followingUsers req, res, (users) ->
       getTwitterData res, users, (data) ->
-        res.json data
+        count = req.query.count
+        count = 100 if not count? or count > 100
+        return res.json data[0...count]
 
 
 getHatenablogData = (res, users, callback) ->
@@ -78,7 +86,7 @@ getHatenablogData = (res, users, callback) ->
       # map entries by triming
       entries = _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # sort entries and take [size]
-      res.json _.sortBy entries, (e) -> (new Date(e.time)).getTime()
+      callback _.sortBy entries, (e) -> (new Date(e.time)).getTime()
       # record in cache
       for cache in newRequests
         cache.res = _.filter (_.compact _.flatten results), (entry) -> cache.user.id is entry.user_id
@@ -232,7 +240,7 @@ getTwitterData = (res, users, callback) ->
 followingUsers = (req, res, callback) ->
   return res.json { error: 'Must login' } unless req.session.user?
   Follow.find { user_id: req.session.user }, (err, follows) ->
-    res.json { error: 'Database error' }, 500 if err
+    return res.json { error: 'Database error' }, 500 if err
     query = []
     for follow in follows
       query.push

@@ -9,7 +9,7 @@ block script
       else
         return location.href = '/hello'
 
-      jQuery.get '/widget/hatenablog', (entries) ->
+      jQuery.get '/widget/hatenablog?count=5', (entries) ->
         $ul = $('#blog ul')
         for entry in entries
           $li = $('<li>')
@@ -21,7 +21,7 @@ block script
           )
           $ul.prepend $li
 
-      jQuery.get '/widget/zusaar', (entries) ->
+      jQuery.get '/widget/zusaar?count=5', (entries) ->
         $ul = $('#event ul')
         for entry in entries
           $li = $('<li>')
@@ -33,7 +33,7 @@ block script
           )
           $ul.prepend $li
 
-      jQuery.get '/widget/twitch', (entries) ->
+      jQuery.get '/widget/twitch?count=5', (entries) ->
         $ul = $('#live ul')
         for entry in entries
           $li = $('<li>')
@@ -44,7 +44,7 @@ block script
           )
           $ul.prepend $li
 
-      jQuery.get '/widget/twitter', (entries) ->
+      jQuery.get '/widget/twitter?count=5', (entries) ->
         $ul = $('#flash ul')
         for entry in entries
           $li = $('<li>')
