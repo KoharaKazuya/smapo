@@ -45,6 +45,11 @@ module.exports.policies = {
   FollowController: {
     '*': 'isOwner'
   },
+
+  SupportController: {
+    '*': true,
+    reportbug: 'isAuthenticated',
+  },
 };
 
 

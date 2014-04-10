@@ -94,6 +94,9 @@ module.exports.routes = {
   '/support/resetpassword': {
     view: 'support/resetpassword'
   },
+  '/support/report': {
+    view: 'support/report'
+  }
 
   /*
   // But what if you want your home page to display
