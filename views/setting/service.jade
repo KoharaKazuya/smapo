@@ -16,6 +16,9 @@ block script
           alert 'ユーザーデータを取得できません'
       $ ->
         $('.main-form').attr 'data-url', '/user/' + user_id
+        $('.main-form button:contains(確認)').on 'click', () ->
+          url = $(@).attr('data-url').replace '___id___', $(@).parent().prev().val()
+          window.open url
 
 block content
   h2.page-header 連携サービス設定
@@ -32,7 +35,7 @@ block content
               .input-group
                 input.form-control#hatenablog(name='hatenablog', placeholder='はてなブログの ID')
                 span.input-group-btn
-                  button.btn.btn-default(type='button') 確認
+                  button.btn.btn-default(type='button', data-url='//___id___.hatenablog.com') 確認
 
         fieldset
           legend オフ会
@@ -42,7 +45,7 @@ block content
               .input-group
                 input.form-control#zusaar(name='zusaar', placeholder='Zusaar ID')
                 span.input-group-btn
-                  button.btn.btn-default(type='button') 確認
+                  button.btn.btn-default(type='button', data-url='//www.zusaar.com/user/___id___') 確認
 
         fieldset
           legend 生放送
@@ -52,7 +55,7 @@ block content
               .input-group
                 input.form-control#twitch(name='twitch', placeholder='Twitch ID')
                 span.input-group-btn
-                  button.btn.btn-default(type='button') 確認
+                  button.btn.btn-default(type='button', data-url='//ja.twitch.tv/___id___') 確認
 
         fieldset
           legend ネット対戦募集 or 一行宣伝
@@ -62,7 +65,7 @@ block content
               .input-group
                 input.form-control#twitter(name='twitter', placeholder='Twitter ID (@ は除く)')
                 span.input-group-btn
-                  button.btn.btn-default(type='button') 確認
+                  button.btn.btn-default(type='button', data-url='//twitter.com/___id___') 確認
 
         fieldset
           legend その他 <small>(連携なし)</small>
@@ -72,14 +75,14 @@ block content
               .input-group
                 input.form-control#skype(name='skype', placeholder='Skype ID')
                 span.input-group-btn
-                  button.btn.btn-default(type='button') 確認
+                  button.btn.btn-default(type='button', disabled='disabled') 確認
           .form-group
             label.col-md-3.control-label(for='nicovideo') ニコニコ動画 <a href="//www.nicovideo.jp"><span class="glyphicon glyphicon-link"></span></a>
             .col-md-9
               .input-group
                 input.form-control#nicovideo(name='nicovideo', placeholder='ニコニコ動画 ユーザー ID')
                 span.input-group-btn
-                  button.btn.btn-default(type='button') 確認
+                  button.btn.btn-default(type='button', data-url='//www.nicovideo.jp/user/___id___') 確認
 
         .form-group
           .col-md-offset-3.col-md-9
