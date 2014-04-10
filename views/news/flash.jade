@@ -1,0 +1,35 @@
+extends ../layout
+
+block script
+  script
+    :coffee
+      jQuery.get '/widget/twitter?count=5', (entries) ->
+        $ul = $('#flash ul')
+        for entry in entries
+          $li = $('<li>')
+
+          date = new Date(entry.time)
+          today = new Date
+          timeDiff = (new Date).getTime() - (new Date(entry.time)).getTime()
+          if timeDiff < 60 * 60 * 1000
+            displayTime = Math.floor(timeDiff / (60*1000)) + ' 分前'
+          else if timeDiff < 24 * 60 * 60 * 1000
+            displayTime = Math.floor(timeDiff / (60*60*1000)) + ' 時間前'
+          else
+            displayTime = Math.floor(timeDiff / (24*60*60*1000)) + ' 日前'
+
+          $h5 = $('<h5>').append($('<small>')
+            .text(displayTime + ' ')
+            .append($('<a>').attr('href', "/profile/#{entry.user_id}").text(entry.username + ' '))
+          ).append($('<a>').text(entry.message).attr('href', entry.link))
+          $ul.prepend $li.append($h5)
+
+block content
+  h2.page-header 全生放送一覧
+  .row
+    .col-md-12
+      #flash.panel.panel-default
+        .panel-heading
+          h3.panel-title ネット対戦募集 or 一行宣伝
+        ul.news
+          li

@@ -96,7 +96,20 @@ module.exports.routes = {
   },
   '/support/report': {
     view: 'support/report'
-  }
+  },
+
+  '/news/blog': {
+    view: 'news/blog'
+  },
+  '/news/event': {
+    view: 'news/event'
+  },
+  '/news/live': {
+    view: 'news/live'
+  },
+  '/news/flash': {
+    view: 'news/flash'
+  },
 
   /*
   // But what if you want your home page to display
