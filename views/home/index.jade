@@ -55,12 +55,11 @@ block script
           else
             displayTime = Math.floor(timeDiff / (24*60*60*1000)) + ' 日前'
 
-          $li.append $('<h5>')
-            .append($('<small>')
-              .text(displayTime + ' ')
-              .append($('<a>').attr('href', "/profile/#{entry.user_id}").text(entry.username + ' ')))
-            .append($('<a>').text(entry.message).attr('href', entry.link))
-          $ul.prepend $li
+          $h5 = $('<h5>').append($('<small>')
+            .text(displayTime + ' ')
+            .append($('<a>').attr('href', "/profile/#{entry.user_id}").text(entry.username + ' '))
+          ).append($('<a>').text(entry.message).attr('href', entry.link))
+          $ul.prepend $li.append($h5)
 
 block content
   // 上部 全面
