@@ -220,22 +220,24 @@ getTwitterData = (res, users, callback) ->
       twitter.get '/statuses/mentions_timeline', { count: 200 }, (err, tweets, response) ->
         return res.json { error: 'Twitter error' }, 500 if err
 
-        data = _.compact _.map tweets, (tweet) ->
-          user = _.find users, (u) -> u.twitter is tweet.user.screen_name
-          return null unless user?
-          return {
-            user_id: user.id
-            username: user.username
-            time: tweet.created_at
-            message: tweet.text.replace /^@ssbportal_flash /, ''
-            link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id_str }"
-          }
+        User.find {}, (err, allUsers) ->
+          return res.json { error: 'Database error' }, 500 if err
+          data = _.compact _.map tweets, (tweet) ->
+            user = _.find allUsers, (u) -> u.twitter is tweet.user.screen_name
+            return null unless user?
+            return {
+              user_id: user.id
+              username: user.username
+              time: tweet.created_at
+              message: tweet.text.replace /^@ssbportal_flash /, ''
+              link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id_str }"
+            }
 
-        callback data
+          callback data.filter (u) -> u.id in _.map users, (f) -> f.id
 
-        # record in cache
-        api.res = data
-        api.save (err) -> null
+          # record in cache
+          api.res = data
+          api.save (err) -> null
 
 followingUsers = (req, res, callback) ->
   return res.json { error: 'Must login' } unless req.session.user?
