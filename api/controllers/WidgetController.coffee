@@ -214,8 +214,12 @@ getTwitterData = (res, users, callback) ->
   ApiCache.findOrCreate query, query, (err, api) ->
     return res.json { error: 'Database error' }, 500 if err
 
+    returnData = (allTweets) ->
+      follow_flashes = _.filter allTweets, (t) -> t.user_id in _.map users, (u) -> u.id
+      callback _.sortBy follow_flashes, (f) -> (new Date(f.time)).getTime()
+
     if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
-      callback api.res
+      returnData api.res
     else
       twitter.get '/statuses/mentions_timeline', { count: 200 }, (err, tweets, response) ->
         return res.json { error: 'Twitter error' }, 500 if err
@@ -233,7 +237,7 @@ getTwitterData = (res, users, callback) ->
               link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id_str }"
             }
 
-          callback data.filter (u) -> u.id in _.map users, (f) -> f.id
+          returnData data
 
           # record in cache
           api.res = data
