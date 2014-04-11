@@ -247,11 +247,8 @@ followingUsers = (req, res, callback) ->
   return res.json { error: 'Must login' } unless req.session.user?
   Follow.find { user_id: req.session.user }, (err, follows) ->
     return res.json { error: 'Database error' }, 500 if err
-    query = []
-    for follow in follows
-      query.push
-        id: follow.follow_id
-    User.find { 'or': query }, (err, users) ->
+    query = _.map follows, (f) -> { id: f.follow_id }
+    User.find { or: query }, (err, users) ->
       return res.json { error: 'Database error' }, 500 if err
       callback(users)
 
