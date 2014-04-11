@@ -75,7 +75,7 @@ getHatenablogData = (res, users, callback) ->
               user_id: query.user.id
               user_icon: query.user.icon
               title: e.title
-              time: e.published
+              time: (new Date(e.published)).getTime()
               link: e.link.href
               summary: e.summary
             }
@@ -86,7 +86,7 @@ getHatenablogData = (res, users, callback) ->
       # map entries by triming
       entries = _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # sort entries and take [size]
-      callback _.sortBy entries, (e) -> (new Date(e.time)).getTime()
+      callback _.sortBy entries, (e) -> e.time
       # record in cache
       for cache in newRequests
         cache.res = _.filter (_.compact _.flatten results), (entry) -> cache.user.id is entry.user_id
@@ -113,7 +113,7 @@ getZusaarData = (res, users, callback) ->
 
     returnData = (curEvents) ->
       allEvents = curEvents.concat _.flatten _.map caches, (cache) -> cache.res
-      callback _.sortBy allEvents, (e) -> (new Date(e.time)).getTime()
+      callback _.sortBy allEvents, (e) -> e.time
 
     if newRequests.length is 0
       returnData []
@@ -136,7 +136,7 @@ getZusaarData = (res, users, callback) ->
               user_id: user.id
               user_icon: user.icon
               title: event.title
-              time: event.started_at
+              time: (new Date(event.started_at)).getTime()
               link: event.event_url
               summary: event.description
             }
@@ -216,7 +216,7 @@ getTwitterData = (res, users, callback) ->
 
     returnData = (allTweets) ->
       follow_flashes = _.filter allTweets, (t) -> t.user_id in _.map users, (u) -> u.id
-      callback _.sortBy follow_flashes, (f) -> (new Date(f.time)).getTime()
+      callback _.sortBy follow_flashes, (f) -> f.time
 
     if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
       returnData api.res
@@ -232,7 +232,7 @@ getTwitterData = (res, users, callback) ->
             return {
               user_id: user.id
               username: user.username
-              time: tweet.created_at
+              time: (new Date(tweet.created_at)).getTime()
               message: tweet.text.replace /^@ssbportal_flash /, ''
               link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id_str }"
             }
