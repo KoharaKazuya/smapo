@@ -4,7 +4,7 @@ block script
   script(src='//cdnjs.cloudflare.com/ajax/libs/marked/0.3.1/marked.min.js')
   script
     :coffee
-      user_id = location.href.replace /^.+(\d+)$/, "$1"
+      user_id = location.href.replace /^.+?(\d+)$/, "$1"
       jQuery.ajax
         method: 'get'
         url: '/user/' + user_id
