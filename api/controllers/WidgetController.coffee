@@ -12,28 +12,28 @@ module.exports =
       getHatenablogData res, users, (data) ->
         count = req.query.count
         count = 100 if not count? or count > 100
-        return res.json data[0...count]
+        return res.json data[-count...]
 
   zusaar: (req, res) ->
     followingUsers req, res, (users) ->
       getZusaarData res, users, (data) ->
         count = req.query.count
         count = 100 if not count? or count > 100
-        return res.json data[0...count]
+        return res.json data[-count...]
 
   twitch: (req, res) ->
     followingUsers req, res, (users) ->
       getTwitchData res, users, (data) ->
         count = req.query.count
         count = 100 if not count? or count > 100
-        return res.json data[0...count]
+        return res.json data[-count...]
 
   twitter: (req, res) ->
     followingUsers req, res, (users) ->
       getTwitterData res, users, (data) ->
         count = req.query.count
         count = 100 if not count? or count > 100
-        return res.json data[0...count]
+        return res.json data[-count...]
 
 
 getHatenablogData = (res, users, callback) ->
