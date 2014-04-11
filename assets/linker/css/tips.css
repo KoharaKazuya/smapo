@@ -18,3 +18,11 @@ body {
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
+.hide-overflow {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellip;
+    width: 100%;
+    display: block;
+}
