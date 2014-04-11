@@ -246,7 +246,7 @@ followingUsers = (req, res, callback) ->
       query.push
         id: follow.follow_id
     User.find { 'or': query }, (err, users) ->
-      return req.json { error: 'Database error' }, 500 if err
+      return res.json { error: 'Database error' }, 500 if err
       callback(users)
 
 twitter = new Twitter
