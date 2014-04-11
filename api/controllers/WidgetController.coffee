@@ -228,7 +228,7 @@ getTwitterData = (res, users, callback) ->
             username: user.username
             time: tweet.created_at
             message: tweet.text.replace /^@ssbportal_flash /, ''
-            link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id }"
+            link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id_str }"
           }
 
         callback data
