@@ -4,8 +4,16 @@ block script
   script
     :coffee
       if $.cookie('user_id')?
-        jQuery.get '/follow?user_id=' + $.cookie('user_id'), (follows) ->
-          location.href = '/help/usage' if follows.length is 0
+        jQuery.ajax '/follow',
+          data:
+            user_id: $.cookie('user_id')
+          success: (follows) ->
+            console.log follows
+            location.href = '/help/usage' if follows.length is 0
+          error: () ->
+            console.log 'error!'
+            jQuery.get '/auth/logout', () ->
+              location.href = '/auth/signin'
       else
         return location.href = '/hello'
 
