@@ -62,9 +62,10 @@ module.exports =
   confirmationmail: (req, res) ->
     User.findOne { email: decodeURIComponent req.query.email }, (err, user) ->
       return res.json { error: 'Database error' }, 500 if err
-      return res.json { error: 'confirmed already' }, 400 if user.confirmed
 
       if user?
+        return res.json { error: 'confirmed already' }, 400 if user.confirmed
+
         bcrypt.hash user.email + sails.config.session.secret, 8, (err, hash) ->
           return res.json { error: 'bcrypt error' }, 500 if err
 
