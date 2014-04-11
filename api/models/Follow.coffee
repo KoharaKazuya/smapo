@@ -2,11 +2,13 @@ module.exports =
 
   attributes:
     user_id:
-      type: 'integer'
+      type: 'string'
       required: true
+      maxLength: 32
     follow_id:
-      type: 'integer'
+      type: 'string'
       required: true
+      maxLength: 32
 
   beforeCreate: (values, next) ->
     Follow.findOne
