@@ -40,7 +40,7 @@ block content
           .col-md-9
             input.form-control#catchphrase(name='catchphrase', maxlength=100, placeholder='あなたを端的に表すと？')
         .form-group
-          label.col-md-3.control-label(for='self_introduction') 自己紹介文
+          label.col-md-3.control-label(for='self_introduction') 自己紹介文 <span class="glyphicon glyphicon-question-sign" data-toggle="popover" data-placement="left" data-title="Markdown 記法で書けます" data-html="true" data-content="Markdown は簡単に HTML を書ける書き方です。<br><a href='http://stabucky.com/wp/archives/4696' target='_blank'>こちら</a>などを参考にして下さい。"></span>
           .col-md-9
             textarea.form-control#self_introduction(name='self_introduction', maxlength=10000, rows=5, placeholder='自己紹介文には Markdown が利用できます')
         .form-group
