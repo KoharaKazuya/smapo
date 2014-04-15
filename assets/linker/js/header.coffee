@@ -21,7 +21,7 @@ if $.cookie('user_id')?
 
         $services = $('<li class="dropdown">')
           .append($('<a class="dropdown-toggle" href="#" data-toggle="dropdown">')
-            .text(' 連携サービス ')
+            .text(' 新規作成 ')
             .prepend($('<span class="glyphicon glyphicon-cloud">'))
             .append($('<b class="caret">')))
           .append $('<ul class="dropdown-menu">')
@@ -41,7 +41,7 @@ if $.cookie('user_id')?
             .append($('<b class="caret">')))
           .append $('<ul class="dropdown-menu">')
             .append(li_a '/setting/profile', 'プロフィール')
-            .append(li_a '/setting/service', '連携サービス')
+            .append(li_a '/setting/service', '新規作成')
             .append(li_a '/setting/follow', 'フォロー')
             .append(li_a '/setting/account', 'アカウント')
 
