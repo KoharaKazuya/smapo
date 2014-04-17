@@ -15,7 +15,7 @@ block script
             $('#user-icon-link').attr 'href', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
             $('#user-icon-img').attr 'src', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
             $('#username').text user.username
-            for name in ['catchphrase', 'self_introduction', 'icon']
+            for name in ['catchphrase', 'self_introduction', 'icon', 'SSB', 'SSBM', 'SSBB', 'SSB4']
               form_old_input name, user
         error: ->
           alert 'ユーザーデータを取得できません'
@@ -39,6 +39,21 @@ block content
           label.col-md-3.control-label(for='catchphrase') キャッチフレーズ <span class="glyphicon glyphicon-question-sign" data-toggle="popover" data-placement="left" data-title="キャッチフレーズについて" data-content="プロフィールやユーザー一覧の名前の横などに表示されます (最大 100 文字まで)"></span>
           .col-md-9
             input.form-control#catchphrase(name='catchphrase', maxlength=100, placeholder='あなたを端的に表すと？')
+        .form-group
+          label.col-md-3.control-label シリーズ
+          .col-md-9
+            label.checkbox-inline
+              input(type='checkbox', name='SSB')
+              | 64
+            label.checkbox-inline
+              input(type='checkbox', name='SSBM')
+              | DX
+            label.checkbox-inline
+              input(type='checkbox', name='SSBB')
+              | X
+            label.checkbox-inline
+              input(type='checkbox', name='SSB4')
+              | 3DS / Wii U
         .form-group
           label.col-md-3.control-label(for='self_introduction') 自己紹介文 <span class="glyphicon glyphicon-question-sign" data-toggle="popover" data-placement="left" data-title="Markdown 記法で書けます" data-html="true" data-content="Markdown は簡単に HTML を書ける書き方です。<br><a href='http://stabucky.com/wp/archives/4696' target='_blank'>こちら</a>などを参考にして下さい。"></span>
           .col-md-9

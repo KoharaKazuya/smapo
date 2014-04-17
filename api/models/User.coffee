@@ -39,6 +39,10 @@ module.exports =
     catchphrase:
       type: 'string'
       maxLength: 100
+    SSB: 'boolean'
+    SSBM: 'boolean'
+    SSBB: 'boolean'
+    SSB4: 'boolean'
     # service
     hatenablog:
       type: 'string'
@@ -112,6 +116,10 @@ removeInvalidAttributes = (values) ->
       'self_introduction'
       'icon'
       'catchphrase'
+      'SSB'
+      'SSBM'
+      'SSBB'
+      'SSB4'
       'hatenablog'
       'zusaar'
       'twitch'

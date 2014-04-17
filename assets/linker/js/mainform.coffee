@@ -10,6 +10,8 @@ $ ->
     data = {}
     $($form.serializeArray()).each (i, v) ->
       data[v.name] = v.value
+    $form.find(':checkbox').each ->
+      data[@.name] = if @.checked then 1 else 0
     # post
     jQuery.ajax
       url: $form.data 'url'
