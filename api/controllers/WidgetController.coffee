@@ -41,7 +41,6 @@ getHatenablogData = (res, users, callback) ->
   queries = _.filter(_.map(users, (user) ->
     service: 'hatenablog'
     id: user.hatenablog
-    user: user
   ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
@@ -72,9 +71,10 @@ getHatenablogData = (res, users, callback) ->
           entries = json.feed.entry
           entries = [entries] unless entries instanceof Array
           callback null, _.map entries, (e) ->
+            user = _.find users, (u) -> u.hatenablog is query.id
             return {
-              user_id: query.user.id
-              user_icon: query.user.icon
+              user_id: user.id
+              user_icon: user.icon
               title: e.title
               time: (new Date(e.published)).getTime()
               link: e.link.href
@@ -90,14 +90,14 @@ getHatenablogData = (res, users, callback) ->
       callback _.sortBy entries, (e) -> e.time
       # record in cache
       for cache in newRequests
-        cache.res = _.filter (_.compact _.flatten results), (entry) -> cache.user.id is entry.user_id
+        user = _.find users, (u) -> u.hatenablog is cache.id
+        cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
         cache.save (err) -> null
 
 getZusaarData = (res, users, callback) ->
   queries = _.filter(_.map(users, (user) ->
     service: 'zusaar'
     id: user.zusaar
-    user: user
   ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
@@ -132,7 +132,7 @@ getZusaarData = (res, users, callback) ->
 
           json = JSON.parse(body)
           events = _.map json.event, (event) ->
-            user = (_.find newRequests, (r) -> r.id is event.owner_id).user
+            user = _.find users, (u) -> u.zusaar is event.owner_id
             return {
               user_id: user.id
               user_icon: user.icon
@@ -149,7 +149,8 @@ getZusaarData = (res, users, callback) ->
             returnData curEvents
             # record in cache
             for cache in newRequests
-              cache.res = _.filter curEvents, (event) -> cache.user.id is event.user_id
+              user = _.find users, (u) -> u.zusaar is cache.id
+              cache.res = _.filter curEvents, (event) -> event.user_id is user.id
               cache.save (err) -> null
       requestAndCallback(0, [])
 
@@ -157,7 +158,6 @@ getTwitchData = (res, users, callback) ->
   queries = _.filter(_.map(users, (user) ->
     service: 'twitch'
     id: user.twitch
-    user: user
   ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
@@ -187,7 +187,7 @@ getTwitchData = (res, users, callback) ->
 
           streams = _.compact _.map JSON.parse(body).streams, (stream) ->
             return null unless stream? and stream.channel?
-            user = (_.find newRequests, (r) -> r.id is stream.channel.name).user
+            user = _.find users, (u) -> u.twitch is stream.channel.name
             return {
               user_id: user.id
               user_icon: user.icon
@@ -203,7 +203,8 @@ getTwitchData = (res, users, callback) ->
             returnData curStreams
             # record in cache
             for cache in newRequests
-              stream = _.find curStreams, (stream) -> cache.user.id is stream.user_id
+              user = _.find users, (u) -> u.twitch is cache.id
+              stream = _.find curStreams, (stream) -> stream.user_id is user.id
               cache.res = if stream? then stream else null
               cache.save (err) -> null
       requestAndCallback(0, [])
