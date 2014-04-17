@@ -12,7 +12,11 @@ block script
               .addClass('list-group-item hide-overflow')
               .attr('href', "/profile/#{user.id}")
               .text(user.username + ' ')
-              .append($('<small>').text(user.catchphrase))
+            $a.append $('<a>').attr('href', '/userlist/ssb').addClass('btn btn-default btn-xs').text('64') if user.SSB
+            $a.append $('<a>').attr('href', '/userlist/ssbm').addClass('btn btn-default btn-xs').text('DX') if user.SSBM
+            $a.append $('<a>').attr('href', '/userlist/ssbb').addClass('btn btn-default btn-xs').text('X') if user.SSBB
+            $a.append $('<a>').attr('href', '/userlist/ssb4').addClass('btn btn-default btn-xs').text('3DS / Wii U') if user.SSB4
+            $a.append $('<small>').text(' ' + user.catchphrase) if user.catchphrase?
             $list.append $a
         error: ->
           alert 'ユーザーデータを取得できません'
