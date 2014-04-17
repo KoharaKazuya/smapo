@@ -82,7 +82,19 @@ module.exports.routes = {
   },
 
   '/userlist': {
-    view: 'userlist'
+    view: 'userlist/index'
+  },
+  '/userlist/ssb': {
+    view: 'userlist/ssb'
+  },
+  '/userlist/ssbm': {
+    view: 'userlist/ssbm'
+  },
+  '/userlist/ssbb': {
+    view: 'userlist/ssbb'
+  },
+  '/userlist/ssb4': {
+    view: 'userlist/ssb4'
   },
 
   '/support/getnoemail': {

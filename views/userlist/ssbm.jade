@@ -1,0 +1,12 @@
+extends ../layout
+
+block script
+  script
+    :coffee
+      generateUserlist '/user?SSBM=true'
+
+block content
+  h2.page-header 全ユーザーリスト
+  .row
+    .col-md-12
+      .list-group#userlist
