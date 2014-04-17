@@ -7,6 +7,8 @@ block script
         url: '/user'
         success: (users) ->
           $list = $('#userlist')
+          users.sort (a, b) ->
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
           for user in users
             $a = $('<a>')
               .addClass('list-group-item hide-overflow')
@@ -17,7 +19,7 @@ block script
             $a.append $('<a>').attr('href', '/userlist/ssbb').addClass('btn btn-default btn-xs').text('X') if user.SSBB
             $a.append $('<a>').attr('href', '/userlist/ssb4').addClass('btn btn-default btn-xs').text('3DS / Wii U') if user.SSB4
             $a.append $('<small>').text(' ' + user.catchphrase) if user.catchphrase?
-            $list.append $a
+            $list.prepend $a
         error: ->
           alert 'ユーザーデータを取得できません'
 
