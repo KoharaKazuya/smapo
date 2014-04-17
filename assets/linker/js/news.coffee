@@ -1,5 +1,6 @@
-generateWidgetHatenablog = (count) ->
+generateWidgetHatenablog = (user, count) ->
   url = '/widget/hatenablog'
+  url += "/#{user}" if user?
   url += "?count=#{count}" if count?
   jQuery.get url, (entries) ->
     $ ->
@@ -14,8 +15,9 @@ generateWidgetHatenablog = (count) ->
         )
         $ul.prepend $li
 
-generateWidgetZusaar = (count) ->
+generateWidgetZusaar = (user, count) ->
   url = '/widget/zusaar'
+  url += "/#{user}" if user?
   url += "?count=#{count}" if count?
   jQuery.get url, (entries) ->
     $ ->
@@ -30,8 +32,9 @@ generateWidgetZusaar = (count) ->
         )
         $ul.prepend $li
 
-generateWidgetTwitch = (count) ->
+generateWidgetTwitch = (user, count) ->
   url = '/widget/twitch'
+  url += "/#{user}" if user?
   url += "?count=#{count}" if count?
   jQuery.get url, (entries) ->
     $ ->
@@ -45,8 +48,9 @@ generateWidgetTwitch = (count) ->
         )
         $ul.prepend $li
 
-generateWidgetTwitter = (count) ->
+generateWidgetTwitter = (user, count) ->
   url = '/widget/twitter'
+  url += "/#{user}" if user?
   url += "?count=#{count}" if count?
   jQuery.get url, (entries) ->
     $ ->

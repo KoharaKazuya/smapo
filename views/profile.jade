@@ -57,6 +57,15 @@ block script
           else
             $('#following').hide()
             $('#nofollow').hide()
+      $ ->
+        if user_id is $.cookie('user_id')
+          $header = $ 'h2.page-header'
+          $header.append $('<small>').text(' あなたのプロフィールページです（このページは誰でも見ることが出来ます）')
+      generateWidgetHatenablog(user_id)
+      generateWidgetZusaar(user_id)
+      generateWidgetTwitch(user_id)
+      generateWidgetTwitter(user_id)
+
 
 block content
   h2.page-header プロフィール
@@ -75,8 +84,30 @@ block content
           button.btn.btn-default.btn-xs フォロー解除
 
   .row
-    .col-md-12
+    .col-md-8
       h3 自己紹介
       p#self_introduction
       h3 連携サービス
       .list-group#services
+    .col-md-4
+      h3 新着情報
+      #blog.panel.panel-default
+        .panel-heading
+          h3.panel-title 日記
+        ul.news
+          li
+      #event.panel.panel-default
+        .panel-heading
+          h3.panel-title オフ会
+        ul.news
+          li
+      #flash.panel.panel-default
+        .panel-heading
+          h3.panel-title ネット対戦募集 or 一行宣伝
+        ul.news
+          li
+      #live.panel.panel-default
+        .panel-heading
+          h3.panel-title 生放送
+        ul.news
+          li

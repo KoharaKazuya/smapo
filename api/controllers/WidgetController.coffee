@@ -8,33 +8,34 @@ Twitter = require 'twit'
 module.exports =
 
   hatenablog: (req, res) ->
-    followingUsers req, res, (users) ->
-      getHatenablogData res, users, (data) ->
-        count = req.query.count
-        count = 100 if not count? or count > 100
-        return res.json data[-count...]
+    widget req, res, getHatenablogData
 
   zusaar: (req, res) ->
-    followingUsers req, res, (users) ->
-      getZusaarData res, users, (data) ->
-        count = req.query.count
-        count = 100 if not count? or count > 100
-        return res.json data[-count...]
+    widget req, res, getZusaarData
 
   twitch: (req, res) ->
-    followingUsers req, res, (users) ->
-      getTwitchData res, users, (data) ->
-        count = req.query.count
-        count = 100 if not count? or count > 100
-        return res.json data[-count...]
+    widget req, res, getTwitchData
 
   twitter: (req, res) ->
+    widget req, res, getTwitterData
+
+
+widget = (req, res, getData) ->
+  if req.params.id?
+    User.findOne req.params.id, (err, user) ->
+      if user?
+        getData res, [user], (data) ->
+          count = req.query.count
+          count = 100 if not count? or count > 100
+          return res.json data[-count...]
+      else
+        return res.json { error: 'user not found' }, 404
+  else
     followingUsers req, res, (users) ->
-      getTwitterData res, users, (data) ->
+      getData res, users, (data) ->
         count = req.query.count
         count = 100 if not count? or count > 100
         return res.json data[-count...]
-
 
 getHatenablogData = (res, users, callback) ->
   queries = _.filter(_.map(users, (user) ->
