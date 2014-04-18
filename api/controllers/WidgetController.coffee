@@ -21,21 +21,26 @@ module.exports =
 
 
 widget = (req, res, getData) ->
+
+  response = (data) ->
+    count = req.query.count
+    count = 100 if not count? or count > 100
+    return res.json data[-count...]
+
   if req.params.id?
-    User.findOne req.params.id, (err, user) ->
-      if user?
-        getData res, [user], (data) ->
-          count = req.query.count
-          count = 100 if not count? or count > 100
-          return res.json data[-count...]
-      else
-        return res.json { error: 'user not found' }, 404
+    if req.params.id is 'all'
+      User.find {}, (err, users) ->
+        console.log users
+        getData res, users, (data) -> response data
+    else
+      User.findOne req.params.id, (err, user) ->
+        if user?
+          getData res, [user], (data) -> response data
+        else
+          return res.json { error: 'user not found' }, 404
   else
     followingUsers req, res, (users) ->
-      getData res, users, (data) ->
-        count = req.query.count
-        count = 100 if not count? or count > 100
-        return res.json data[-count...]
+      getData res, users, (data) -> response data
 
 getHatenablogData = (res, users, callback) ->
   queries = _.filter(_.map(users, (user) ->
