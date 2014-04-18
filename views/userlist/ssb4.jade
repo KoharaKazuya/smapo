@@ -5,8 +5,13 @@ block script
     :coffee
       generateUserlist '/user?SSB4=true'
 
+block heading
+  .container
+    a.logo(href='http://www.smashbros.com/jp/')
+      img.img-responsive.img-frame(src='/images/series/ssb4.png')
+
 block content
-  h2.page-header 全ユーザーリスト
+  h2.page-header スマブラX ユーザーリスト
   .row
     .col-md-12
       .list-group#userlist

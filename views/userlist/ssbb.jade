@@ -5,8 +5,13 @@ block script
     :coffee
       generateUserlist '/user?SSBB=true'
 
+block heading
+  .container
+    a.logo(href='http://www.smashbros.com/wii/jp/index.html')
+      img.img-responsive.img-frame(src='/images/series/ssbb.png')
+
 block content
-  h2.page-header 全ユーザーリスト
+  h2.page-header スマブラX ユーザーリスト
   .row
     .col-md-12
       .list-group#userlist

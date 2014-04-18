@@ -5,8 +5,13 @@ block script
     :coffee
       generateUserlist '/user?SSB=true'
 
+block heading
+  .container
+    a.logo(href='http://www.nintendo.co.jp/n01/n64/software/nus_p_nalj/')
+      img.img-responsive.img-frame(src='/images/series/ssb.png')
+
 block content
-  h2.page-header 全ユーザーリスト
+  h2.page-header スマブラ64 ユーザーリスト
   .row
     .col-md-12
       .list-group#userlist

@@ -5,8 +5,13 @@ block script
     :coffee
       generateUserlist '/user?SSBM=true'
 
+block heading
+  .container
+    a.logo(href='http://www.nintendo.co.jp/ngc/galj/')
+      img.img-responsive.img-frame(src='/images/series/ssbm.png')
+
 block content
-  h2.page-header 全ユーザーリスト
+  h2.page-header スマブラDX ユーザーリスト
   .row
     .col-md-12
       .list-group#userlist
