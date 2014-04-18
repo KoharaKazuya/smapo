@@ -15,7 +15,7 @@ block script
             $('#user-icon-link').attr 'href', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
             $('#user-icon-img').attr 'src', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
             $('#username').text user.username
-            for name in ['catchphrase', 'self_introduction', 'icon', 'SSB', 'SSBM', 'SSBB', 'SSB4']
+            for name in ['catchphrase', 'self_introduction', 'icon', 'SSB', 'SSBM', 'SSBB', 'SSB4', 'address']
               form_old_input name, user
         error: ->
           alert 'ユーザーデータを取得できません'
@@ -54,6 +54,67 @@ block content
             label.checkbox-inline
               input(type='checkbox', name='SSB4')
               | 3DS / Wii U
+        .form-group
+          label.col-md-3.control-label(for='address') 住所
+          .col-md-9
+            input.form-control#address(name='address', maxlength='100', placeholder='お住まいの地域', list='prefecture')
+            datalist#prefecture
+              optgroup(label='北海道')
+                option(value='北海道')
+              optgroup(label='東北地方')
+                option(value='青森県')
+                option(value='岩手県')
+                option(value='宮城県')
+                option(value='秋田県')
+                option(value='山形県')
+                option(value='福島県')
+              optgroup(label='関東地方')
+                option(value='茨城県')
+                option(value='栃木県')
+                option(value='群馬県')
+                option(value='埼玉県')
+                option(value='千葉県')
+                option(value='東京都')
+                option(value='神奈川県')
+              optgroup(label='中部地方')
+                option(value='新潟県')
+                option(value='富山県')
+                option(value='石川県')
+                option(value='福井県')
+                option(value='山梨県')
+                option(value='長野県')
+                option(value='岐阜県')
+                option(value='静岡県')
+                option(value='愛知県')
+              optgroup(label='近畿地方')
+                option(value='三重県')
+                option(value='滋賀県')
+                option(value='京都府')
+                option(value='大阪府')
+                option(value='兵庫県')
+                option(value='奈良県')
+                option(value='和歌山県')
+              optgroup(label='中国地方')
+                option(value='鳥取県')
+                option(value='島根県')
+                option(value='岡山県')
+                option(value='広島県')
+                option(value='山口県')
+              optgroup(label='四国地方')
+                option(value='香川県')
+                option(value='徳島県')
+                option(value='愛媛県')
+                option(value='高知県')
+              optgroup(label='九州地方')
+                option(value='福岡県')
+                option(value='佐賀県')
+                option(value='長崎県')
+                option(value='熊本県')
+                option(value='大分県')
+                option(value='宮崎県')
+                option(value='鹿児島県')
+              optgroup(label='沖縄県')
+                option(value='沖縄県')
         .form-group
           label.col-md-3.control-label(for='self_introduction') 自己紹介文 <span class="glyphicon glyphicon-question-sign" data-toggle="popover" data-placement="left" data-title="Markdown 記法で書けます" data-html="true" data-content="Markdown は簡単に HTML を書ける書き方です。<br><a href='http://stabucky.com/wp/archives/4696' target='_blank'>こちら</a>などを参考にして下さい。"></span>
           .col-md-9

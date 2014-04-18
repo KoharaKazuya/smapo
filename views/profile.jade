@@ -16,6 +16,7 @@ block script
             $('#ssbm').removeClass('btn-default').addClass('btn-primary') if user.SSBM
             $('#ssbb').removeClass('btn-default').addClass('btn-primary') if user.SSBB
             $('#ssb4').removeClass('btn-default').addClass('btn-primary') if user.SSB4
+            $('#address').text user.address
             $('#self_introduction').html marked(user.self_introduction or '', { sanitize: true })
             $('#user-icon-link').attr 'href', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
             $('#user-icon-img').attr 'src', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
@@ -95,6 +96,8 @@ block content
         a.btn.btn-default.btn-xs#ssbm(href='/userlist/ssbm') DX
         a.btn.btn-default.btn-xs#ssbb(href='/userlist/ssbb') X
         a.btn.btn-default.btn-xs#ssb4(href='/userlist/ssb4') 3DS / Wii U
+      h3 住所
+      p#address
       h3 自己紹介
       p#self_introduction
       h3 連携サービス

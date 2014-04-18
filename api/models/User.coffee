@@ -43,6 +43,9 @@ module.exports =
     SSBM: 'boolean'
     SSBB: 'boolean'
     SSB4: 'boolean'
+    address:
+      type: 'string'
+      maxLength: 100
     # service
     hatenablog:
       type: 'string'
@@ -120,6 +123,7 @@ removeInvalidAttributes = (values) ->
       'SSBM'
       'SSBB'
       'SSB4'
+      'address'
       'hatenablog'
       'zusaar'
       'twitch'
