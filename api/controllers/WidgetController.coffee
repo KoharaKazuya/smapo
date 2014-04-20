@@ -30,7 +30,7 @@ widget = (req, res, getData) ->
   if req.params.id?
     if req.params.id is 'all'
       User.find {}, (err, users) ->
-        console.log users
+        return res.json { error: 'Database error' } if err
         getData res, users, (data) -> response data
     else
       User.findOne req.params.id, (err, user) ->
