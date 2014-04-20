@@ -43,10 +43,10 @@ widget = (req, res, getData) ->
       getData res, users, (data) -> response data
 
 getHatenablogData = (res, users, callback) ->
-  queries = _.filter(_.map(users, (user) ->
+  users = _.filter users, (u) -> u.hatenablog? and u.hatenablog != ''
+  queries = _.map users, (user) ->
     service: 'hatenablog'
     id: user.hatenablog
-  ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
 
@@ -100,10 +100,10 @@ getHatenablogData = (res, users, callback) ->
         cache.save (err) -> null
 
 getZusaarData = (res, users, callback) ->
-  queries = _.filter(_.map(users, (user) ->
+  users = _.filter users, (u) -> u.zusaar? and u.zusaar != ''
+  queries = _.map users, (user) ->
     service: 'zusaar'
     id: user.zusaar
-  ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
 
@@ -160,10 +160,10 @@ getZusaarData = (res, users, callback) ->
       requestAndCallback(0, [])
 
 getTwitchData = (res, users, callback) ->
-  queries = _.filter(_.map(users, (user) ->
+  users = _.filter users, (u) -> u.twitch? and u.twitch != ''
+  queries = _.map users, (user) ->
     service: 'twitch'
     id: user.twitch
-  ), (q) -> q.id? and q.id !='')
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return res.json { error: 'Database error' }, 500 if err
 
@@ -215,6 +215,7 @@ getTwitchData = (res, users, callback) ->
       requestAndCallback(0, [])
 
 getTwitterData = (res, users, callback) ->
+  users = _.filter users, (u) -> u.twitter? and u.twitter != ''
   query =
     service: 'twitter'
     id: 'ssbportal_flash'
