@@ -69,8 +69,8 @@ module.exports =
       obj = @.toObject()
       delete obj.password
       delete obj.email
-      delete obj.createdAt
       delete obj.updatedAt
+      obj.createdAt = (new Date(obj.createdAt)).getTime()
       obj
 
   beforeCreate: (values, next) ->

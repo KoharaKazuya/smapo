@@ -3,8 +3,7 @@ generateUserlist = (query) ->
     url: query
     success: (users) ->
       $list = $('#userlist')
-      users.sort (a, b) ->
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      users.sort (a, b) -> a.createdAt - b.createdAt
       for user in users
         $a = $('<a>')
           .addClass('list-group-item hide-overflow')
