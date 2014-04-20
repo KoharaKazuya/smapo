@@ -72,7 +72,7 @@ getHatenablogData = (res, users, callback) ->
           json = xml2json.toJson body,
             object: true
             sanitize: false
-          return null unless json.feed? and json.feed.entry?
+          return callback null unless json.feed? and json.feed.entry?
           entries = json.feed.entry
           entries = [entries] unless entries instanceof Array
           callback null, _.map entries, (e) ->
