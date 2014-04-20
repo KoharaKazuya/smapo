@@ -65,8 +65,10 @@ getHatenablogData = (res, users, callback) ->
     funcs = _.map newRequests, (u) ->
       (callback) ->
         query = queries.pop()
-        qStr = "http://#{ query.id }.hatenablog.com/feed"
-        request qStr, (err, response, body) ->
+        request
+          url: "http://#{ query.id }.hatenablog.com/feed"
+          timeout: 3000
+        , (err, response, body) ->
           return callback err if err?
           return callback null, null unless response.statusCode is 200
           json = xml2json.toJson body,
@@ -131,8 +133,10 @@ getZusaarData = (res, users, callback) ->
         prevMonth.addMonths -1
         nextMonth = Date.today()
         nextMonth.addMonths 1
-        qStr = "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&ym=#{ (mon.toFormat 'YYYYMM' for mon in [prevMonth, today, nextMonth]).join ',' }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
-        request qStr, (err, response, body) ->
+        request
+          url: "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&ym=#{ (mon.toFormat 'YYYYMM' for mon in [prevMonth, today, nextMonth]).join ',' }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+          timeout: 3000
+        , (err, response, body) ->
           return res.json.err if err?
 
           json = JSON.parse(body)
@@ -186,8 +190,10 @@ getTwitchData = (res, users, callback) ->
     else
       # request all users stream
       requestAndCallback = (offset, preStreams) ->
-        qStr = "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
-        request qStr, (err, response, body) ->
+        request
+          url: "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+          timeout: 3000
+        , (err, response, body) ->
           return res.json.err if err?
 
           streams = _.compact _.map JSON.parse(body).streams, (stream) ->
