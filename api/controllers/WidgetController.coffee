@@ -247,7 +247,7 @@ getTwitterData = (res, users, callback) ->
               user_id: user.id
               username: user.username
               time: (new Date(tweet.created_at)).getTime()
-              message: tweet.text.replace /^@ssbportal_flash /, ''
+              message: tweet.text.replace /^@ssbportal_flash[ 　]*/, ''
               link: "https://twitter.com/#{ tweet.user.screen_name }/status/#{ tweet.id_str }"
             }
 
