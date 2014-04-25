@@ -148,7 +148,7 @@ getZusaarData = (res, users, callback) ->
               title: event.title
               time: (new Date(event.started_at)).getTime()
               link: event.event_url
-              summary: event.description
+              summary: (event.description.replace /<.*?>/g, '').replace /&.*;/g, ''
             }
           curEvents = preEvents.concat events
           if json.results_returned is 100
