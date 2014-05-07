@@ -6,7 +6,7 @@ module.exports = (req, res, next) ->
       return next(err) if err
       return next() unless follow?
 
-      if req.session.user is follow.user_id
+      if "#{ req.session.user }" is "#{ follow.user_id }"
         next()
       else
         res.forbidden 'You are not owner of this follow'
