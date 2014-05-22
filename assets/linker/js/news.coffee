@@ -7,7 +7,7 @@ generateWidgetHatenablog = (user, count) ->
       $ul = $('#blog ul')
       for entry in entries
         $li = $('<li>')
-        $li.append $('<a>').append($('<img>').addClass('user-icon').attr('src', if entry.user_icon? and entry.user_icon != '' then entry.user_icon else '/images/icon/404_smashball.png')).attr('href', '/profile/' + entry.user_id)
+        $li.append generateUserIcon entry
         date = new Date(entry.time)
         $li.append $('<a>').attr('href', entry.link).append(
           $('<h5>').text(' ' + entry.title).prepend($('<small>').text("#{date.getMonth() + 1}/#{date.getDate()}"))
@@ -24,7 +24,7 @@ generateWidgetZusaar = (user, count) ->
       $ul = $('#event ul')
       for entry in entries
         $li = $('<li>')
-        $li.append $('<a>').append($('<img>').addClass('user-icon').attr('src', if entry.user_icon? and entry.user_icon != '' then entry.user_icon else '/images/icon/404_smashball.png')).attr('href', '/profile/' + entry.user_id)
+        $li.append generateUserIcon entry
         date = new Date(entry.time)
         $li.append $('<a>').attr('href', entry.link).append(
           $('<h5>').text(' ' + entry.title).prepend($('<small>').text("#{date.getMonth() + 1}/#{date.getDate()}"))
@@ -41,7 +41,7 @@ generateWidgetTwitch = (user, count) ->
       $ul = $('#live ul')
       for entry in entries
         $li = $('<li>')
-        $li.append $('<a>').append($('<img>').addClass('user-icon').attr('src', if entry.user_icon? and entry.user_icon != '' then entry.user_icon else '/images/icon/404_smashball.png')).attr('href', '/profile/' + entry.user_id)
+        $li.append generateUserIcon entry
         date = new Date(entry.time)
         $li.append $('<a>').attr('href', entry.link).append(
           $('<h5>').text(' ' + entry.title).prepend($('<small>').text(entry.game))
@@ -73,3 +73,36 @@ generateWidgetTwitter = (user, count) ->
           .append($('<a>').attr('href', "/profile/#{entry.user_id}").text(entry.username + ' '))
         ).append($('<a>').text(entry.message).attr('href', entry.link))
         $ul.prepend $li.append($h5)
+
+generateUserIcon = (entry) ->
+  $('<a>').append(
+    $('<img>').addClass('user-icon').attr('src', if entry.user_icon? and entry.user_icon != '' then entry.user_icon else '/images/icon/404_smashball.png')
+  ).attr('href', '/profile/' + entry.user_id).on
+    mouseenter: ->
+      loadProfile = (cb) =>
+        $profile = $('<div>').addClass('mini-profile')
+        $(@).parent().append $profile
+        jQuery.get $(@).attr('href').replace(/^\/profile\//, '/user/'), (user) ->
+          $profile.append $('<h5>').text(user.username + ' ').append $('<small>').text(user.catchphrase)
+          $profile.append $('<p>').text(user.self_introduction)
+          cb()
+      showProfile = () =>
+        $profile = $(@).parent().find '.mini-profile'
+        $profile.prev().stop().animate
+          maxHeight: 0
+        , 'fast'
+        $profile.stop().animate
+          maxHeight: '74px'
+        , 'fast'
+      if $(@).parent().find('.mini-profile').size() > 0
+        showProfile()
+      else
+        loadProfile showProfile
+    mouseleave: ->
+      $profile = $('.mini-profile')
+      $profile.stop().animate
+        maxHeight: 0
+      , 'fast'
+      $profile.prev().stop().animate
+        maxHeight: '74px'
+      , 'fast'

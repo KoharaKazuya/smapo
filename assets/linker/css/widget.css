@@ -38,14 +38,18 @@
     float: left;
 }
 
-.news a+a {
+.news a+a, .news .mini-profile {
     margin-left: 84px;
     display: block;
     max-height: 74px;
     overflow: hidden;
 }
 
-.news a+a > p {
+.news .mini-profile {
+    max-height: 0;
+}
+
+.news a+a > p, .news .mini-profile > p {
     color: #999;
     font-size: 85%;
     line-height: 1.3;

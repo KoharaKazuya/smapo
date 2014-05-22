@@ -8,10 +8,8 @@ block script
           data:
             user_id: $.cookie('user_id')
           success: (follows) ->
-            console.log follows
             location.href = '/help/usage' if follows.length is 0
           error: () ->
-            console.log 'error!'
             jQuery.get '/auth/logout', () ->
               location.href = '/auth/signin'
       else
