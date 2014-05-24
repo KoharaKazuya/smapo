@@ -20,7 +20,7 @@ module.exports =
     widget req, res, [getTwitterData], (e) -> e.time
 
   video: (req, res) ->
-    widget req, res, [getNicovideoData]
+    widget req, res, [getNicovideoData, getYoutubeData]
 
 
 widget = (req, res, getDatas, comparator) ->
@@ -317,6 +317,63 @@ getNicovideoData = (users, callback) ->
       # record in cache
       for cache in newRequests
         user = _.find users, (u) -> u.nicovideo is cache.id
+        cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
+        cache.save (err) -> null
+
+getYoutubeData = (users, callback) ->
+  users = _.filter users, (u) -> u.youtube? and u.youtube != ''
+  queries = _.map users, (user) ->
+    service: 'youtube'
+    id: user.youtube
+  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    return callback { text: 'Database error', status: 500 } if err
+
+    grouped = _.groupBy apis, (api) ->
+      if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
+        'caches'
+      else
+        'newRequests'
+    caches = grouped.caches
+    caches = [] unless caches?
+    newRequests = grouped.newRequests
+    newRequests = [] unless newRequests?
+
+    # generate access function
+    queries = _.map newRequests, (q) -> q
+    funcs = _.map newRequests, (u) ->
+      (cb) ->
+        query = queries.pop()
+        request
+          url: "http://gdata.youtube.com/feeds/api/users/#{ query.id }/uploads"
+          timeout: 3000
+        , (err, response, body) ->
+          return cb { text: 'YouTube feed request error', status: 500 } if err?
+          return cb null, null unless response.statusCode is 200
+          json = xml2json.toJson body,
+            object: true
+            sanitize: false
+          return cb null unless json.feed? and json.feed.entry?
+          entries = json.feed.entry
+          entries = [entries] unless entries instanceof Array
+          cb null, _.map entries, (e) ->
+            user = _.find users, (u) -> u.youtube is query.id
+            return {
+              user_id: user.id
+              user_icon: user.icon
+              title: e.title.$t
+              time: (new Date(e.published)).getTime()
+              link: (_.find e.link, (l) -> l.rel is 'alternate').href
+              summary: e.content.$t
+            }
+
+    # access all api in parallel
+    async.parallel funcs, (err, results) ->
+      return callback err if err
+      # map entries by triming
+      callback null, _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
+      # record in cache
+      for cache in newRequests
+        user = _.find users, (u) -> u.youtube is cache.id
         cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
         cache.save (err) -> null
 
