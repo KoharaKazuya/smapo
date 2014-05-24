@@ -2,8 +2,11 @@ generateWidgetHatenablog = (user, count) ->
   url = '/widget/hatenablog'
   url += "/#{user}" if user?
   url += "?count=#{count}" if count?
+  $loading = $('<div>').addClass('loading')
+  $('#blog .panel-title').append $loading
   jQuery.get url, (entries) ->
     $ ->
+      $loading.remove()
       $ul = $('#blog ul')
       for entry in entries
         $li = $('<li>')
@@ -19,8 +22,11 @@ generateWidgetZusaar = (user, count) ->
   url = '/widget/zusaar'
   url += "/#{user}" if user?
   url += "?count=#{count}" if count?
+  $loading = $('<div>').addClass('loading')
+  $('#event .panel-title').append $loading
   jQuery.get url, (entries) ->
     $ ->
+      $loading.remove()
       $ul = $('#event ul')
       for entry in entries
         $li = $('<li>')
@@ -36,8 +42,11 @@ generateWidgetTwitch = (user, count) ->
   url = '/widget/twitch'
   url += "/#{user}" if user?
   url += "?count=#{count}" if count?
+  $loading = $('<div>').addClass('loading')
+  $('#live .panel-title').append $loading
   jQuery.get url, (entries) ->
     $ ->
+      $loading.remove()
       $ul = $('#live ul')
       for entry in entries
         $li = $('<li>')
@@ -52,8 +61,11 @@ generateWidgetTwitter = (user, count) ->
   url = '/widget/twitter'
   url += "/#{user}" if user?
   url += "?count=#{count}" if count?
+  $loading = $('<div>').addClass('loading')
+  $('#flash .panel-title').append $loading
   jQuery.get url, (entries) ->
     $ ->
+      $loading.remove()
       $ul = $('#flash ul')
       for entry in entries
         $li = $('<li>')
@@ -78,8 +90,11 @@ generateWidgetVideo = (user, count) ->
   url = '/widget/video'
   url += "/#{user}" if user?
   url += "?count=#{count}" if count?
+  $loading = $('<div>').addClass('loading')
+  $('#video .panel-title').append $loading
   jQuery.get url, (entries) ->
     $ ->
+      $loading.remove()
       $ul = $('#video ul')
       for entry in entries
         $li = $('<li>')
