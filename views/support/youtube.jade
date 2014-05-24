@@ -1,0 +1,34 @@
+extends ../layout
+
+block content
+  h2.page-header YouTube <small>で動画を公開する方法</small>
+  .row
+    .col-md-12
+      h3 STEP1 ユーザー登録
+      h3 STEP2 動画をアップロードする
+      p
+        a(href='https://www.youtube.com/upload') こちら
+        | から行います。
+      h3 STEP3 連携の設定をする
+      p
+        | 自分の YouTube のアカウント名 (= Google アカウント名) を知る必要があります。
+        a(href='//www.youtube.com') YouTube
+        | にログイン後、
+        a(href='//www.youtube.com/user') こちら
+        | にアクセスして下さい。
+      p
+        | その後、ブラウザの上部に表示されている
+        code www.youtube.com/user/??????
+        | もしくは
+        code www.youtube.com/channel/??????
+        | の
+        code ??????
+        | の部分を
+        strong
+          span.glyphicon.glyphicon-cog
+          | 設定
+        | >
+        strong 連携サービス設定
+        | から
+        strong YouTube
+        | の欄に入力することで連携設定が完了します。

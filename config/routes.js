@@ -80,6 +80,9 @@ module.exports.routes = {
   '/help/twitter': {
     view: 'support/twitter'
   },
+  '/help/youtube': {
+    view: 'support/youtube'
+  },
 
   '/userlist': {
     view: 'userlist/index'
