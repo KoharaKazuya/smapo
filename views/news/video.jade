@@ -1,0 +1,16 @@
+extends ../layout
+
+block script
+  script
+    :coffee
+      generateWidgetVideo()
+
+block content
+  h2.page-header 全動画一覧
+  .row
+    .col-md-12
+      #video.panel.panel-default
+        .panel-heading
+          h3.panel-title 動画
+        ul.news
+          li

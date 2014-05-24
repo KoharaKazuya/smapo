@@ -18,6 +18,7 @@ block script
       generateWidgetZusaar(null, 5)
       generateWidgetTwitch(null, 5)
       generateWidgetTwitter(null, 5)
+      generateWidgetVideo(null, 5)
 
 block content
   // 上部 全面
@@ -61,4 +62,11 @@ block content
         ul.news
           li
             a(href='/news/live')
+              small.pull-right もっと見る
+      #video.panel.panel-default
+        .panel-heading
+          h3.panel-title 動画
+        ul.news
+          li
+            a(href='/news/video')
               small.pull-right もっと見る

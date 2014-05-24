@@ -19,6 +19,8 @@ module.exports =
   twitter: (req, res) ->
     widget req, res, [getTwitterData], (e) -> e.time
 
+  video: (req, res) ->
+    widget req, res, [getNicovideoData]
 
 
 widget = (req, res, getDatas, comparator) ->
@@ -260,6 +262,63 @@ getTwitterData = (users, callback) ->
           # record in cache
           api.res = data
           api.save (err) -> null
+
+getNicovideoData = (users, callback) ->
+  users = _.filter users, (u) -> u.nicovideo? and u.nicovideo != ''
+  queries = _.map users, (user) ->
+    service: 'nicovideo'
+    id: user.nicovideo
+  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    return callback { text: 'Database error', status: 500 } if err
+
+    grouped = _.groupBy apis, (api) ->
+      if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
+        'caches'
+      else
+        'newRequests'
+    caches = grouped.caches
+    caches = [] unless caches?
+    newRequests = grouped.newRequests
+    newRequests = [] unless newRequests?
+
+    # generate access function
+    queries = _.map newRequests, (q) -> q
+    funcs = _.map newRequests, (u) ->
+      (cb) ->
+        query = queries.pop()
+        request
+          url: "http://www.nicovideo.jp/user/#{ query.id }/video?rss=atom"
+          timeout: 3000
+        , (err, response, body) ->
+          return cb { text: 'Nicovideo feed request error', status: 500 } if err?
+          return cb null, null unless response.statusCode is 200
+          json = xml2json.toJson body,
+            object: true
+            sanitize: false
+          return cb null unless json.feed? and json.feed.entry?
+          entries = json.feed.entry
+          entries = [entries] unless entries instanceof Array
+          cb null, _.map entries, (e) ->
+            user = _.find users, (u) -> u.nicovideo is query.id
+            return {
+              user_id: user.id
+              user_icon: user.icon
+              title: e.title
+              time: (new Date(e.published)).getTime()
+              link: e.link.href
+              summary: e.content.$t.replace /^.*nico-description\">(.*?)<\/p>.*$/, (substr, m) -> m
+            }
+
+    # access all api in parallel
+    async.parallel funcs, (err, results) ->
+      return callback err if err
+      # map entries by triming
+      callback null, _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
+      # record in cache
+      for cache in newRequests
+        user = _.find users, (u) -> u.nicovideo is cache.id
+        cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
+        cache.save (err) -> null
 
 followingUsers = (req, res, callback) ->
   return res.json { error: 'Must login' } unless req.session.user?

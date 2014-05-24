@@ -125,6 +125,9 @@ module.exports.routes = {
   '/news/flash': {
     view: 'news/flash'
   },
+  '/news/video': {
+    view: 'news/video'
+  },
 
   /*
   // But what if you want your home page to display

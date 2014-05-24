@@ -74,6 +74,23 @@ generateWidgetTwitter = (user, count) ->
         ).append($('<a>').text(entry.message).attr('href', entry.link))
         $ul.prepend $li.append($h5)
 
+generateWidgetVideo = (user, count) ->
+  url = '/widget/video'
+  url += "/#{user}" if user?
+  url += "?count=#{count}" if count?
+  jQuery.get url, (entries) ->
+    $ ->
+      $ul = $('#video ul')
+      for entry in entries
+        $li = $('<li>')
+        $li.append generateUserIcon entry
+        date = new Date(entry.time)
+        $li.append $('<a>').attr('href', entry.link).append(
+          $('<h5>').text(' ' + entry.title).prepend($('<small>').text("#{date.getMonth() + 1}/#{date.getDate()}"))
+          $('<p>').text(entry.summary)
+        )
+        $ul.prepend $li
+
 generateUserIcon = (entry) ->
   $('<a>').append(
     $('<img>').addClass('user-icon').attr('src', if entry.user_icon? and entry.user_icon != '' then entry.user_icon else '/images/icon/404_smashball.png')
