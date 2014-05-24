@@ -8,20 +8,20 @@ Twitter = require 'twit'
 module.exports =
 
   hatenablog: (req, res) ->
-    widget req, res, [getHatenablogData]
+    widget req, res, [getHatenablogData], (e) -> e.time
 
   zusaar: (req, res) ->
-    widget req, res, [getZusaarData]
+    widget req, res, [getZusaarData], (e) -> e.time
 
   twitch: (req, res) ->
     widget req, res, [getTwitchData]
 
   twitter: (req, res) ->
-    widget req, res, [getTwitterData]
+    widget req, res, [getTwitterData], (e) -> e.time
 
 
 
-widget = (req, res, getDatas) ->
+widget = (req, res, getDatas, comparator) ->
 
   response = (users) ->
     funcs = _.map getDatas, (getData) ->
@@ -31,7 +31,9 @@ widget = (req, res, getDatas) ->
       return res.json err.text, err.status if err
       count = req.query.count
       count = 100 if not count? or count > 100
-      return res.json (_.flatten results)[-count...]
+      data = _.flatten results
+      data = _.sortBy data, comparator if comparator
+      return res.json data[-count...]
 
   if req.params.id?
     if req.params.id is 'all'
@@ -98,9 +100,7 @@ getHatenablogData = (users, callback) ->
     async.parallel funcs, (err, results) ->
       return callback err if err
       # map entries by triming
-      entries = _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
-      # sort entries and take [size]
-      callback null, _.sortBy entries, (e) -> e.time
+      callback null, _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # record in cache
       for cache in newRequests
         user = _.find users, (u) -> u.hatenablog is cache.id
@@ -126,8 +126,7 @@ getZusaarData = (users, callback) ->
     newRequests = [] unless newRequests?
 
     returnData = (curEvents) ->
-      allEvents = curEvents.concat _.flatten _.map caches, (cache) -> cache.res
-      callback null, _.sortBy allEvents, (e) -> e.time
+      callback null, curEvents.concat _.map caches, (cache) -> cache.res
 
     if newRequests.length is 0
       returnData []
@@ -235,8 +234,7 @@ getTwitterData = (users, callback) ->
     return callback { text: 'Database error', status: 500 } if err
 
     returnData = (allTweets) ->
-      follow_flashes = _.filter allTweets, (t) -> t.user_id in _.map users, (u) -> u.id
-      callback null, _.sortBy follow_flashes, (f) -> f.time
+      callback null, _.filter allTweets, (t) -> t.user_id in _.map users, (u) -> u.id
 
     if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
       returnData api.res
