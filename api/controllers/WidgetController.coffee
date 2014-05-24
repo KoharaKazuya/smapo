@@ -267,7 +267,7 @@ getNicovideoData = (users, callback) ->
   users = _.filter users, (u) -> u.nicovideo? and u.nicovideo != ''
   queries = _.map users, (user) ->
     service: 'nicovideo'
-    id: user.nicovideo
+    id: "#{ user.nicovideo }"
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
     return callback { text: 'Database error', status: 500 } if err
 
@@ -299,7 +299,7 @@ getNicovideoData = (users, callback) ->
           entries = json.feed.entry
           entries = [entries] unless entries instanceof Array
           cb null, _.map entries, (e) ->
-            user = _.find users, (u) -> u.nicovideo is query.id
+            user = _.find users, (u) -> "#{ u.nicovideo }" is query.id
             return {
               user_id: user.id
               user_icon: user.icon
@@ -316,7 +316,7 @@ getNicovideoData = (users, callback) ->
       callback null, _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # record in cache
       for cache in newRequests
-        user = _.find users, (u) -> u.nicovideo is cache.id
+        user = _.find users, (u) -> "#{ u.nicovideo }" is cache.id
         cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
         cache.save (err) -> null
 
