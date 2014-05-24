@@ -8,47 +8,53 @@ Twitter = require 'twit'
 module.exports =
 
   hatenablog: (req, res) ->
-    widget req, res, getHatenablogData
+    widget req, res, [getHatenablogData]
 
   zusaar: (req, res) ->
-    widget req, res, getZusaarData
+    widget req, res, [getZusaarData]
 
   twitch: (req, res) ->
-    widget req, res, getTwitchData
+    widget req, res, [getTwitchData]
 
   twitter: (req, res) ->
-    widget req, res, getTwitterData
+    widget req, res, [getTwitterData]
 
 
-widget = (req, res, getData) ->
 
-  response = (data) ->
-    count = req.query.count
-    count = 100 if not count? or count > 100
-    return res.json data[-count...]
+widget = (req, res, getDatas) ->
+
+  response = (users) ->
+    funcs = _.map getDatas, (getData) ->
+      (callback) ->
+        getData users, callback
+    async.parallel funcs, (err, results) ->
+      return res.json err.text, err.status if err
+      count = req.query.count
+      count = 100 if not count? or count > 100
+      return res.json (_.flatten results)[-count...]
 
   if req.params.id?
     if req.params.id is 'all'
       User.find {}, (err, users) ->
         return res.json { error: 'Database error' } if err
-        getData res, users, (data) -> response data
+        response users
     else
       User.findOne req.params.id, (err, user) ->
         if user?
-          getData res, [user], (data) -> response data
+          response [user]
         else
           return res.json { error: 'user not found' }, 404
   else
     followingUsers req, res, (users) ->
-      getData res, users, (data) -> response data
+      response users
 
-getHatenablogData = (res, users, callback) ->
+getHatenablogData = (users, callback) ->
   users = _.filter users, (u) -> u.hatenablog? and u.hatenablog != ''
   queries = _.map users, (user) ->
     service: 'hatenablog'
     id: user.hatenablog
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
-    return res.json { error: 'Database error' }, 500 if err
+    return callback { text: 'Database error', status: 500 } if err
 
     grouped = _.groupBy apis, (api) ->
       if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
@@ -63,21 +69,21 @@ getHatenablogData = (res, users, callback) ->
     # generate access function
     queries = _.map newRequests, (q) -> q
     funcs = _.map newRequests, (u) ->
-      (callback) ->
+      (cb) ->
         query = queries.pop()
         request
           url: "http://#{ query.id }.hatenablog.com/feed"
           timeout: 3000
         , (err, response, body) ->
-          return callback err if err?
-          return callback null, null unless response.statusCode is 200
+          return cb { text: 'Hatenablog feed request error', status: 500 } if err?
+          return cb null, null unless response.statusCode is 200
           json = xml2json.toJson body,
             object: true
             sanitize: false
-          return callback null unless json.feed? and json.feed.entry?
+          return cb null unless json.feed? and json.feed.entry?
           entries = json.feed.entry
           entries = [entries] unless entries instanceof Array
-          callback null, _.map entries, (e) ->
+          cb null, _.map entries, (e) ->
             user = _.find users, (u) -> u.hatenablog is query.id
             return {
               user_id: user.id
@@ -90,24 +96,24 @@ getHatenablogData = (res, users, callback) ->
 
     # access all api in parallel
     async.parallel funcs, (err, results) ->
-      return res.json err if err
+      return callback err if err
       # map entries by triming
       entries = _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # sort entries and take [size]
-      callback _.sortBy entries, (e) -> e.time
+      callback null, _.sortBy entries, (e) -> e.time
       # record in cache
       for cache in newRequests
         user = _.find users, (u) -> u.hatenablog is cache.id
         cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
         cache.save (err) -> null
 
-getZusaarData = (res, users, callback) ->
+getZusaarData = (users, callback) ->
   users = _.filter users, (u) -> u.zusaar? and u.zusaar != ''
   queries = _.map users, (user) ->
     service: 'zusaar'
     id: user.zusaar
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
-    return res.json { error: 'Database error' }, 500 if err
+    return callback { text: 'Database error', status: 500 } if err
 
     grouped = _.groupBy apis, (api) ->
       if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 10 * 60 * 1000  # 10min
@@ -121,7 +127,7 @@ getZusaarData = (res, users, callback) ->
 
     returnData = (curEvents) ->
       allEvents = curEvents.concat _.flatten _.map caches, (cache) -> cache.res
-      callback _.sortBy allEvents, (e) -> e.time
+      callback null, _.sortBy allEvents, (e) -> e.time
 
     if newRequests.length is 0
       returnData []
@@ -137,7 +143,7 @@ getZusaarData = (res, users, callback) ->
           url: "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&ym=#{ (mon.toFormat 'YYYYMM' for mon in [prevMonth, today, nextMonth]).join ',' }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
           timeout: 3000
         , (err, response, body) ->
-          return res.json.err if err?
+          return callback { text: 'Zusaar API request error', status: 500 } if err?
 
           json = JSON.parse(body)
           events = _.map json.event, (event) ->
@@ -163,13 +169,13 @@ getZusaarData = (res, users, callback) ->
               cache.save (err) -> null
       requestAndCallback(0, [])
 
-getTwitchData = (res, users, callback) ->
+getTwitchData = (users, callback) ->
   users = _.filter users, (u) -> u.twitch? and u.twitch != ''
   queries = _.map users, (user) ->
     service: 'twitch'
     id: user.twitch
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
-    return res.json { error: 'Database error' }, 500 if err
+    return callback { text: 'Database error', status: 500 } if err
 
     grouped = _.groupBy apis, (api) ->
       if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
@@ -183,7 +189,7 @@ getTwitchData = (res, users, callback) ->
 
     returnData = (curStreams) ->
       allStreams = curStreams.concat _.compact _.map caches, (cache) -> cache.res
-      callback allStreams
+      callback null, allStreams
 
     if newRequests.length is 0
       returnData []
@@ -194,7 +200,7 @@ getTwitchData = (res, users, callback) ->
           url: "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
           timeout: 3000
         , (err, response, body) ->
-          return res.json.err if err?
+          return { text: 'Twitch API request error', status: 500 } if err?
 
           streams = _.compact _.map JSON.parse(body).streams, (stream) ->
             return null unless stream? and stream.channel?
@@ -220,26 +226,26 @@ getTwitchData = (res, users, callback) ->
               cache.save (err) -> null
       requestAndCallback(0, [])
 
-getTwitterData = (res, users, callback) ->
+getTwitterData = (users, callback) ->
   users = _.filter users, (u) -> u.twitter? and u.twitter != ''
   query =
     service: 'twitter'
     id: 'ssbportal_flash'
   ApiCache.findOrCreate query, query, (err, api) ->
-    return res.json { error: 'Database error' }, 500 if err
+    return callback { text: 'Database error', status: 500 } if err
 
     returnData = (allTweets) ->
       follow_flashes = _.filter allTweets, (t) -> t.user_id in _.map users, (u) -> u.id
-      callback _.sortBy follow_flashes, (f) -> f.time
+      callback null, _.sortBy follow_flashes, (f) -> f.time
 
     if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
       returnData api.res
     else
       twitter.get '/statuses/mentions_timeline', { count: 200 }, (err, tweets, response) ->
-        return res.json { error: 'Twitter error' }, 500 if err
+        return callback { text: 'Twitter API error', status: 500 } if err
 
         User.find {}, (err, allUsers) ->
-          return res.json { error: 'Database error' }, 500 if err
+          return callback { text: 'Database error', status: 500 } if err
           data = _.compact _.map tweets, (tweet) ->
             user = _.find allUsers, (u) -> u.twitter is tweet.user.screen_name
             return null unless user?
