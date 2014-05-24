@@ -9,15 +9,18 @@ if $.cookie('user_id')?
         $link_zusaar = li_a('/help/zusaar', 'Zusaar', 'オフ会')
         $link_twitch = li_a('/help/twitch', 'Twitch', '生放送')
         $link_twitter = li_a('/help/twitter', 'Twitter', '一行宣伝')
+        $link_youtube = li_a('/help/youtube', 'YouTube', '動画')
         # generate service links
         $service_hatenablog = $link_hatenablog.clone()
         $service_zusaar = $link_zusaar.clone()
         $service_twitch = $link_twitch.clone()
         $service_twitter = $link_twitter.clone()
+        $service_youtube = $link_youtube.clone()
         $service_hatenablog.find('a').attr('href', "//#{data.hatenablog}.hatenablog.com") if data.hatenablog
         $service_zusaar.find('a').attr('href', "//www.zusaar.com/user/#{data.zusaar}") if data.zusaar
         $service_twitch.find('a').attr('href', "//ja.twitch.tv/#{data.twitch}") if data.twitch
         $service_twitter.find('a').attr('href', "//twitter.com/intent/tweet?text=%40ssbportal_flash%20") if data.twitter
+        $service_youtube.find('a').attr('href', "//www.youtube.com/user/#{data.youtube}") if data.youtube
 
         $services = $('<li class="dropdown">')
           .append($('<a class="dropdown-toggle" href="#" data-toggle="dropdown">')
@@ -29,6 +32,7 @@ if $.cookie('user_id')?
             .append($service_zusaar)
             .append($service_twitch)
             .append($service_twitter)
+            .append($service_youtube)
 
         $profile = $('<li>').append $("<a href=\"/profile/#{ data.id }\">")
           .text(' プロフィール')
@@ -57,6 +61,7 @@ if $.cookie('user_id')?
             .append($link_zusaar)
             .append($link_twitch)
             .append($link_twitter)
+            .append($link_youtube)
 
         $logout = $('<li>').append $('<a href="javascript:void(0)">')
           .text(' ログアウト')
