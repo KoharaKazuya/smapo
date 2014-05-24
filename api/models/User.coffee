@@ -65,6 +65,9 @@ module.exports =
     nicovideo:
       type: 'integer'
       min: 0
+    youtube:
+      type: 'string'
+      maxLength: 64
     toJSON: () ->
       obj = @.toObject()
       delete obj.password
@@ -130,4 +133,5 @@ removeInvalidAttributes = (values) ->
       'twitter'
       'skype'
       'nicovideo'
+      'youtube'
     ]
