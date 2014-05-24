@@ -20,7 +20,7 @@ module.exports =
     widget req, res, [getTwitterData], (e) -> e.time
 
   video: (req, res) ->
-    widget req, res, [getNicovideoData, getYoutubeData]
+    widget req, res, [getNicovideoData, getYoutubeData], (e) -> e.time
 
 
 widget = (req, res, getDatas, comparator) ->
