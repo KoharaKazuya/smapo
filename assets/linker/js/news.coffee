@@ -53,7 +53,9 @@ generateWidgetTwitch = (user, count) ->
         $li.append generateUserIcon entry
         date = new Date(entry.time)
         $li.append $('<a>').attr('href', entry.link).append(
-          $('<h5>').text(' ' + entry.title).prepend($('<small>').text(entry.game))
+          $('<h5>').append $('<small>').text entry.game
+        ).append(
+          $('<span>').text entry.title
         )
         $ul.prepend $li
 
