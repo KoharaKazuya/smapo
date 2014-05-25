@@ -40,10 +40,15 @@ widget = (req, res, getDatas, comparator) ->
   if req.params.id?
     if req.params.id is 'all'
       User.find {}, (err, users) ->
-        return res.json { error: 'Database error' } if err
+        if err
+          console.error JSON.stringify err
+          return res.json { error: 'Database error' }
         response users
     else
       User.findOne req.params.id, (err, user) ->
+        if err
+          console.error JSON.stringify err
+          return res.json { error: 'Database error' }
         if user?
           response [user]
         else
@@ -58,7 +63,9 @@ getHatenablogData = (users, callback) ->
     service: 'hatenablog'
     id: user.hatenablog
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
-    return callback { text: 'Database error', status: 500 } if err
+    if err
+      console.error JSON.stringify err
+      return callback { text: 'Database error', status: 500 }
 
     grouped = _.groupBy apis, (api) ->
       if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
@@ -79,7 +86,9 @@ getHatenablogData = (users, callback) ->
           url: "http://#{ query.id }.hatenablog.com/feed"
           timeout: 3000
         , (err, response, body) ->
-          return cb { text: 'Hatenablog feed request error', status: 500 } if err?
+          if err
+            console.error JSON.stringify err
+            return cb { text: 'Hatenablog feed request error', status: 500 }
           return cb null, null unless response.statusCode is 200
           json = xml2json.toJson body,
             object: true
@@ -115,7 +124,9 @@ getZusaarData = (users, callback) ->
     service: 'zusaar'
     id: user.zusaar
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
-    return callback { text: 'Database error', status: 500 } if err
+    if err
+      console.error JSON.stringify err
+      return callback { text: 'Database error', status: 500 }
 
     grouped = _.groupBy apis, (api) ->
       if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 10 * 60 * 1000  # 10min
@@ -144,7 +155,9 @@ getZusaarData = (users, callback) ->
           url: "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&ym=#{ (mon.toFormat 'YYYYMM' for mon in [prevMonth, today, nextMonth]).join ',' }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
           timeout: 3000
         , (err, response, body) ->
-          return callback { text: 'Zusaar API request error', status: 500 } if err?
+          if err
+            console.error JSON.stringify err
+            return callback { text: 'Zusaar API request error', status: 500 }
 
           json = JSON.parse(body)
           events = _.map json.event, (event) ->
@@ -176,7 +189,9 @@ getTwitchData = (users, callback) ->
     service: 'twitch'
     id: user.twitch
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
-    return callback { text: 'Database error', status: 500 } if err
+    if err
+      console.error JSON.stringify err
+      return callback { text: 'Database error', status: 500 }
 
     grouped = _.groupBy apis, (api) ->
       if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 1000  # 60sec
@@ -201,7 +216,9 @@ getTwitchData = (users, callback) ->
           url: "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
           timeout: 3000
         , (err, response, body) ->
-          return { text: 'Twitch API request error', status: 500 } if err?
+          if err
+            console.error JSON.stringify err
+            return { text: 'Twitch API request error', status: 500 }
 
           streams = _.compact _.map JSON.parse(body).streams, (stream) ->
             return null unless stream? and stream.channel?
@@ -233,7 +250,9 @@ getTwitterData = (users, callback) ->
     service: 'twitter'
     id: 'ssbportal_flash'
   ApiCache.findOrCreate query, query, (err, api) ->
-    return callback { text: 'Database error', status: 500 } if err
+    if err
+      console.error JSON.stringify err
+      return callback { text: 'Database error', status: 500 }
 
     returnData = (allTweets) ->
       callback null, _.filter allTweets, (t) -> t.user_id in _.map users, (u) -> u.id
@@ -242,10 +261,14 @@ getTwitterData = (users, callback) ->
       returnData api.res
     else
       twitter.get '/statuses/mentions_timeline', { count: 200 }, (err, tweets, response) ->
-        return callback { text: 'Twitter API error', status: 500 } if err
+        if err
+          console.error JSON.stringify err
+          return callback { text: 'Twitter API error', status: 500 }
 
         User.find {}, (err, allUsers) ->
-          return callback { text: 'Database error', status: 500 } if err
+          if err
+            console.error JSON.stringify err
+            return callback { text: 'Database error', status: 500 }
           data = _.compact _.map tweets, (tweet) ->
             user = _.find allUsers, (u) -> u.twitter is tweet.user.screen_name
             return null unless user?
@@ -269,7 +292,9 @@ getNicovideoData = (users, callback) ->
     service: 'nicovideo'
     id: "#{ user.nicovideo }"
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
-    return callback { text: 'Database error', status: 500 } if err
+    if err
+      console.error JSON.stringify err
+      return callback { text: 'Database error', status: 500 }
 
     grouped = _.groupBy apis, (api) ->
       if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
@@ -290,7 +315,9 @@ getNicovideoData = (users, callback) ->
           url: "http://www.nicovideo.jp/user/#{ query.id }/video?rss=atom"
           timeout: 3000
         , (err, response, body) ->
-          return cb { text: 'Nicovideo feed request error', status: 500 } if err?
+          if err
+            console.error JSON.stringify err
+            return cb { text: 'Nicovideo feed request error', status: 500 }
           return cb null, null unless response.statusCode is 200
           json = xml2json.toJson body,
             object: true
@@ -326,7 +353,9 @@ getYoutubeData = (users, callback) ->
     service: 'youtube'
     id: user.youtube
   ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
-    return callback { text: 'Database error', status: 500 } if err
+    if err
+      console.error JSON.stringify err
+      return callback { text: 'Database error', status: 500 }
 
     grouped = _.groupBy apis, (api) ->
       if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
@@ -347,7 +376,9 @@ getYoutubeData = (users, callback) ->
           url: "http://gdata.youtube.com/feeds/api/users/#{ query.id }/uploads"
           timeout: 3000
         , (err, response, body) ->
-          return cb { text: 'YouTube feed request error', status: 500 } if err?
+          if err
+            console.error JSON.stringify err
+            return cb { text: 'YouTube feed request error', status: 500 }
           return cb null, null unless response.statusCode is 200
           json = xml2json.toJson body,
             object: true
@@ -380,10 +411,14 @@ getYoutubeData = (users, callback) ->
 followingUsers = (req, res, callback) ->
   return res.json { error: 'Must login' } unless req.session.user?
   Follow.find { user_id: req.session.user }, (err, follows) ->
-    return res.json { error: 'Database error' }, 500 if err
+    if err
+      console.error JSON.stringify err
+      return res.json { error: 'Database error' }, 500
     query = _.map follows, (f) -> f.follow_id
     User.where { id: query }, (err, users) ->
-      return res.json { error: 'Database error' }, 500 if err
+      if err
+        console.error JSON.stringify err
+        return res.json { error: 'Database error' }, 500
       callback(users)
 
 twitter = new Twitter
