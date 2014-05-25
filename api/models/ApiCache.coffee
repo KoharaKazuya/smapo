@@ -6,7 +6,7 @@ module.exports =
     service:
       type: 'string'
       required: true
-    id:
+    name:
       type: 'string'
       required: true
     res:

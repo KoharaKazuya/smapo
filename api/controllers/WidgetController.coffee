@@ -61,8 +61,8 @@ getHatenablogData = (users, callback) ->
   users = _.filter users, (u) -> u.hatenablog? and u.hatenablog != ''
   queries = _.map users, (user) ->
     service: 'hatenablog'
-    id: user.hatenablog
-  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    name: user.hatenablog
+  ApiCache.findOrCreateEach ['service', 'name'], queries, (err, apis) ->
     if err
       console.error JSON.stringify err
       return callback { text: 'Database error', status: 500 }
@@ -83,7 +83,7 @@ getHatenablogData = (users, callback) ->
       (cb) ->
         query = queries.pop()
         request
-          url: "http://#{ query.id }.hatenablog.com/feed"
+          url: "http://#{ query.name }.hatenablog.com/feed"
           timeout: 3000
         , (err, response, body) ->
           if err
@@ -97,7 +97,7 @@ getHatenablogData = (users, callback) ->
           entries = json.feed.entry
           entries = [entries] unless entries instanceof Array
           cb null, _.map entries, (e) ->
-            user = _.find users, (u) -> u.hatenablog is query.id
+            user = _.find users, (u) -> u.hatenablog is query.name
             return {
               user_id: user.id
               user_icon: user.icon
@@ -114,7 +114,7 @@ getHatenablogData = (users, callback) ->
       callback null, _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # record in cache
       for cache in newRequests
-        user = _.find users, (u) -> u.hatenablog is cache.id
+        user = _.find users, (u) -> u.hatenablog is cache.name
         cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
         cache.save (err) -> null
 
@@ -122,8 +122,8 @@ getZusaarData = (users, callback) ->
   users = _.filter users, (u) -> u.zusaar? and u.zusaar != ''
   queries = _.map users, (user) ->
     service: 'zusaar'
-    id: user.zusaar
-  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    name: user.zusaar
+  ApiCache.findOrCreateEach ['service', 'name'], queries, (err, apis) ->
     if err
       console.error JSON.stringify err
       return callback { text: 'Database error', status: 500 }
@@ -152,7 +152,7 @@ getZusaarData = (users, callback) ->
         nextMonth = Date.today()
         nextMonth.addMonths 1
         request
-          url: "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&ym=#{ (mon.toFormat 'YYYYMM' for mon in [prevMonth, today, nextMonth]).join ',' }&owner_id=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+          url: "http://www.zusaar.com/api/event/?count=100&start=#{ offset+1 }&ym=#{ (mon.toFormat 'YYYYMM' for mon in [prevMonth, today, nextMonth]).join ',' }&owner_id=#{ (_.map newRequests, (r) -> r.name ).join ',' }"
           timeout: 3000
         , (err, response, body) ->
           if err
@@ -178,7 +178,7 @@ getZusaarData = (users, callback) ->
             returnData curEvents
             # record in cache
             for cache in newRequests
-              user = _.find users, (u) -> u.zusaar is cache.id
+              user = _.find users, (u) -> u.zusaar is cache.name
               cache.res = _.filter curEvents, (event) -> event.user_id is user.id
               cache.save (err) -> null
       requestAndCallback(0, [])
@@ -187,8 +187,8 @@ getTwitchData = (users, callback) ->
   users = _.filter users, (u) -> u.twitch? and u.twitch != ''
   queries = _.map users, (user) ->
     service: 'twitch'
-    id: user.twitch
-  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    name: user.twitch
+  ApiCache.findOrCreateEach ['service', 'name'], queries, (err, apis) ->
     if err
       console.error JSON.stringify err
       return callback { text: 'Database error', status: 500 }
@@ -213,7 +213,7 @@ getTwitchData = (users, callback) ->
       # request all users stream
       requestAndCallback = (offset, preStreams) ->
         request
-          url: "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.id ).join ',' }"
+          url: "https://api.twitch.tv/kraken/streams?limit=100&offset=#{ offset }&channel=#{ (_.map newRequests, (r) -> r.name ).join ',' }"
           timeout: 3000
         , (err, response, body) ->
           if err
@@ -238,7 +238,7 @@ getTwitchData = (users, callback) ->
             returnData curStreams
             # record in cache
             for cache in newRequests
-              user = _.find users, (u) -> u.twitch is cache.id
+              user = _.find users, (u) -> u.twitch is cache.name
               stream = _.find curStreams, (stream) -> stream.user_id is user.id
               cache.res = if stream? then stream else null
               cache.save (err) -> null
@@ -248,7 +248,7 @@ getTwitterData = (users, callback) ->
   users = _.filter users, (u) -> u.twitter? and u.twitter != ''
   query =
     service: 'twitter'
-    id: 'ssbportal_flash'
+    name: 'ssbportal_flash'
   ApiCache.findOrCreate query, query, (err, api) ->
     if err
       console.error JSON.stringify err
@@ -290,8 +290,8 @@ getNicovideoData = (users, callback) ->
   users = _.filter users, (u) -> u.nicovideo? and u.nicovideo != ''
   queries = _.map users, (user) ->
     service: 'nicovideo'
-    id: "#{ user.nicovideo }"
-  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    name: "#{ user.nicovideo }"
+  ApiCache.findOrCreateEach ['service', 'name'], queries, (err, apis) ->
     if err
       console.error JSON.stringify err
       return callback { text: 'Database error', status: 500 }
@@ -312,7 +312,7 @@ getNicovideoData = (users, callback) ->
       (cb) ->
         query = queries.pop()
         request
-          url: "http://www.nicovideo.jp/user/#{ query.id }/video?rss=atom"
+          url: "http://www.nicovideo.jp/user/#{ query.name }/video?rss=atom"
           timeout: 3000
         , (err, response, body) ->
           if err
@@ -326,7 +326,7 @@ getNicovideoData = (users, callback) ->
           entries = json.feed.entry
           entries = [entries] unless entries instanceof Array
           cb null, _.map entries, (e) ->
-            user = _.find users, (u) -> "#{ u.nicovideo }" is query.id
+            user = _.find users, (u) -> "#{ u.nicovideo }" is query.name
             return {
               user_id: user.id
               user_icon: user.icon
@@ -343,7 +343,7 @@ getNicovideoData = (users, callback) ->
       callback null, _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # record in cache
       for cache in newRequests
-        user = _.find users, (u) -> "#{ u.nicovideo }" is cache.id
+        user = _.find users, (u) -> "#{ u.nicovideo }" is cache.name
         cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
         cache.save (err) -> null
 
@@ -351,8 +351,8 @@ getYoutubeData = (users, callback) ->
   users = _.filter users, (u) -> u.youtube? and u.youtube != ''
   queries = _.map users, (user) ->
     service: 'youtube'
-    id: user.youtube
-  ApiCache.findOrCreateEach ['service', 'id'], queries, (err, apis) ->
+    name: user.youtube
+  ApiCache.findOrCreateEach ['service', 'name'], queries, (err, apis) ->
     if err
       console.error JSON.stringify err
       return callback { text: 'Database error', status: 500 }
@@ -373,7 +373,7 @@ getYoutubeData = (users, callback) ->
       (cb) ->
         query = queries.pop()
         request
-          url: "http://gdata.youtube.com/feeds/api/users/#{ query.id }/uploads"
+          url: "http://gdata.youtube.com/feeds/api/users/#{ query.name }/uploads"
           timeout: 3000
         , (err, response, body) ->
           if err
@@ -387,7 +387,7 @@ getYoutubeData = (users, callback) ->
           entries = json.feed.entry
           entries = [entries] unless entries instanceof Array
           cb null, _.map entries, (e) ->
-            user = _.find users, (u) -> u.youtube is query.id
+            user = _.find users, (u) -> u.youtube is query.name
             return {
               user_id: user.id
               user_icon: user.icon
@@ -404,7 +404,7 @@ getYoutubeData = (users, callback) ->
       callback null, _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
       # record in cache
       for cache in newRequests
-        user = _.find users, (u) -> u.youtube is cache.id
+        user = _.find users, (u) -> u.youtube is cache.name
         cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
         cache.save (err) -> null
 
