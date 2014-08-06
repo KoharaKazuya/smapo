@@ -3,17 +3,20 @@ extends ../layout
 block script
   script
     :coffee
-      if $.cookie('user_id')?
-        jQuery.ajax '/follow',
-          data:
-            user_id: $.cookie('user_id')
-          success: (follows) ->
-            location.href = '/help/usage' if follows.length is 0
-          error: () ->
-            jQuery.get '/auth/logout', () ->
-              location.href = '/auth/signin'
-      else
-        return location.href = '/hello'
+      jQuery.ajax '/user/me',
+        dataType: 'json'
+        success: (me) ->
+          jQuery.ajax '/follow',
+            data:
+              user_id: me.id
+            success: (follows) ->
+              location.href = '/help/usage' if follows.length is 0
+            error: () ->
+              jQuery.get '/auth/logout', () ->
+                location.href = '/auth/signin'
+        error: () ->
+          location.href = '/hello'
+
       generateWidgetHatenablog(null, 5)
       generateWidgetZusaar(null, 5)
       generateWidgetTwitch(null, 5)

@@ -4,21 +4,19 @@ block script
   script
     :coffee
       # display user info
-      user_id = $.cookie('user_id')
       jQuery.ajax
-        method: 'get'
-        url: '/user/' + user_id
+        dataType: 'json'
+        url: '/user/me'
         success: (user) ->
           $ ->
             for name in ['hatenablog', 'zusaar', 'twitch', 'twitter', 'skype', 'nicovideo', 'youtube']
               form_old_input name, user
+            $('.main-form').attr 'data-url', '/user/' + user_id
+            $('.main-form button:contains(確認)').on 'click', () ->
+              url = $(@).attr('data-url').replace '___id___', $(@).parent().prev().val()
+              window.open url
         error: ->
           alert 'ユーザーデータを取得できません'
-      $ ->
-        $('.main-form').attr 'data-url', '/user/' + user_id
-        $('.main-form button:contains(確認)').on 'click', () ->
-          url = $(@).attr('data-url').replace '___id___', $(@).parent().prev().val()
-          window.open url
 
 block content
   h2.page-header 連携サービス設定

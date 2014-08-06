@@ -3,32 +3,33 @@ extends ../layout
 block script
   script
     :coffee
-      jQuery.get '/follow',
-        user_id: $.cookie 'user_id'
-      , (follows) ->
-        jQuery.get '/user', (users) ->
-          jQuery.get '/csrfToken', (csrf) ->
-            $ ->
-              $list = $('#followlist')
-              cache = {}
-              for user in users
-                cache[user.id] = user
-              for follow in follows
-                user = cache[follow.follow_id]
-                $a = $('<a>')
-                  .addClass('list-group-item hide-overflow')
-                  .attr('href', "/profile/#{user.id}")
-                  .text(user.username + ' ')
-                  .append($('<small>').text(user.catchphrase))
-                  .append($('<button>').addClass('btn btn-default btn-xs pull-right').text('フォロー解除').on 'click', (event) ->
-                    jQuery.ajax "/follow/#{ follow.id }",
-                      data: csrf
-                      method: 'delete'
-                      success: () =>
-                        $(@).parent('a').hide()
-                    return false
-                  )
-                $list.append $a
+      jQuery.getJSON '/user/me', (me) ->
+        jQuery.get '/follow',
+          user_id: me.id
+        , (follows) ->
+          jQuery.get '/user', (users) ->
+            jQuery.get '/csrfToken', (csrf) ->
+              $ ->
+                $list = $('#followlist')
+                cache = {}
+                for user in users
+                  cache[user.id] = user
+                for follow in follows
+                  user = cache[follow.follow_id]
+                  $a = $('<a>')
+                    .addClass('list-group-item hide-overflow')
+                    .attr('href', "/profile/#{user.id}")
+                    .text(user.username + ' ')
+                    .append($('<small>').text(user.catchphrase))
+                    .append($('<button>').addClass('btn btn-default btn-xs pull-right').text('フォロー解除').on 'click', (event) ->
+                      jQuery.ajax "/follow/#{ follow.id }",
+                        data: csrf
+                        method: 'delete'
+                        success: () =>
+                          $(@).parent('a').hide()
+                      return false
+                    )
+                  $list.append $a
 
 block content
   h2.page-header フォロー設定

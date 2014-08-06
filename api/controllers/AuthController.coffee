@@ -17,7 +17,6 @@ module.exports =
 
             if match
               req.session.user = user.id
-              res.cookie 'user_id', user.id
               return res.json user
             else
               req.session.user = null
@@ -40,7 +39,6 @@ module.exports =
 
   logout: (req, res) ->
     req.session.user = null
-    res.clearCookie 'user_id'
     res.json { success: 'logout' }
 
   confirm: (req, res) ->

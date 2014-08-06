@@ -35,37 +35,37 @@ block script
           alert 'ユーザーデータを取得できません'
       jQuery.get '/csrfToken', (csrf) ->
         $ ->
-          my_id = $.cookie 'user_id'
-          follow_id = 0
-          if my_id?
-            jQuery.get '/follow',
-              user_id: my_id
-              follow_id: user_id
-            , (data) ->
-              if data.length > 0
-                $('#nofollow').hide()
-                follow_id = data[0].id
-                $('#following button').on 'click', (event) ->
-                  jQuery.ajax "/follow/#{ follow_id }",
-                    method: 'delete'
-                    data: csrf
-                    success: () ->
-                      $('#following').hide()
-                      $('#nofollow').show()
-              else
-                $('#following').hide()
-            $('#nofollow button').on 'click', (event) ->
-              jQuery.get "/follow/create?user_id=#{ my_id }&follow_id=#{ user_id }", null, (follow) ->
-                $('#nofollow').hide()
-                $('#following').show()
-                follow_id = follow.id
-          else
-            $('#following').hide()
-            $('#nofollow').hide()
+          jQuery.ajax '/user/me',
+            dataType: 'json'
+            success: (me) ->
+              jQuery.get '/follow',
+                user_id: me.id
+                follow_id: user_id
+              , (data) ->
+                if data.length > 0
+                  $('#nofollow').hide()
+                  follow_id = data[0].id
+                  $('#following button').on 'click', (event) ->
+                    jQuery.ajax "/follow/#{ follow_id }",
+                      method: 'delete'
+                      data: csrf
+                      success: () ->
+                        $('#following').hide()
+                        $('#nofollow').show()
+                else
+                  $('#following').hide()
+              $('#nofollow button').on 'click', (event) ->
+                jQuery.get "/follow/create?user_id=#{ me.id }&follow_id=#{ user_id }", null, (follow) ->
+                  $('#nofollow').hide()
+                  $('#following').show()
+            error: ->
+              $('#following').hide()
+              $('#nofollow').hide()
       $ ->
-        if user_id is $.cookie('user_id')
-          $header = $ 'h2.page-header'
-          $header.append $('<small>').text(' あなたのプロフィールページです（このページは誰でも見ることが出来ます）')
+        jQuery.getJSON '/user/me', (me) ->
+          if user_id is "#{ me.id }"
+            $header = $ 'h2.page-header'
+            $header.append $('<small>').text(' あなたのプロフィールページです（このページは誰でも見ることが出来ます）')
       generateWidgetHatenablog(user_id)
       generateWidgetZusaar(user_id)
       generateWidgetTwitch(user_id)

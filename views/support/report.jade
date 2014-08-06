@@ -3,8 +3,9 @@ extends ../layout
 block script
   script
     :coffee
-      $ ->
-        $('.main-form').attr 'data-url', "/support/reportbug/#{ $.cookie 'user_id' }"
+      jQuery.getJSON '/user/me', (me) ->
+        $ ->
+          $('.main-form').attr 'data-url', "/support/reportbug/#{ me.id }"
 
 block content
   h2.page-header バグ報告

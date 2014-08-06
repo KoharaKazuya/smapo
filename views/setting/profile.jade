@@ -6,10 +6,9 @@ block script
       $ ->
         $('[data-toggle=popover]').popover()
       # display user info
-      user_id = $.cookie('user_id')
       jQuery.ajax
-        method: 'get'
-        url: '/user/' + user_id
+        dataType: 'json'
+        url: '/user/me'
         success: (user) ->
           $ ->
             $('#user-icon-link').attr 'href', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png'
@@ -17,10 +16,9 @@ block script
             $('#username').text user.username
             for name in ['catchphrase', 'self_introduction', 'icon', 'SSB', 'SSBM', 'SSBB', 'SSB4', 'address']
               form_old_input name, user
+            $('.main-form').attr 'data-url', '/user/' + user_id
         error: ->
           alert 'ユーザーデータを取得できません'
-      $ ->
-        $('.main-form').attr 'data-url', '/user/' + user_id
 
 block content
   h2.page-header プロフィール変更

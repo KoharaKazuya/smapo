@@ -1,6 +1,12 @@
 bcrypt = require 'bcrypt'
 
 module.exports =
+
+  me: (req, res) ->
+    User.findOne req.session.user, (err, user) ->
+      return res.json { error: 'user not found' }, 500 if err
+      return res.json user
+
   search: (req, res) ->
     query = req.query
     # delete invalid search query

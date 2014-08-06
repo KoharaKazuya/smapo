@@ -1,5 +1,5 @@
 generateUserlist = (query) ->
-  user_id = $.cookie 'user_id'
+  user_id = jQuery.ajax('/user/me', { dataType: 'json', async: false }).id
   jQuery.ajax
     url: query
     success: (users) ->
