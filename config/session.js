@@ -36,6 +36,7 @@ module.exports.session = {
 
   // Uncomment the following lines to use your Mongo adapter as a session store
   // adapter: 'mongo',
+  adapter: (process.env.NODE_ENV == 'production') ? 'mongo' : undefined,
   //
   // host: 'localhost',
   // port: 27017,
@@ -46,10 +47,12 @@ module.exports.session = {
   //
   // # Note: url will override other connection settings
   // url: 'mongodb://user:pass@host:port/database/collection',
+  url: process.env.MONGOLAB_URI,
   //
   // username: '',
   // password: '',
   // auto_reconnect: false,
+  auto_reconnect: true,
   // ssl: false,
   // stringify: true
 
