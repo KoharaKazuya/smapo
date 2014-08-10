@@ -11,7 +11,7 @@ block script
           $ ->
             for name in ['hatenablog', 'zusaar', 'twitch', 'twitter', 'skype', 'nicovideo', 'youtube']
               form_old_input name, user
-            $('.main-form').attr 'data-url', '/user/' + user_id
+            $('.main-form').attr 'data-url', '/user/' + user.id
             $('.main-form button:contains(確認)').on 'click', () ->
               url = $(@).attr('data-url').replace '___id___', $(@).parent().prev().val()
               window.open url

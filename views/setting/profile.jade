@@ -16,7 +16,7 @@ block script
             $('#username').text user.username
             for name in ['catchphrase', 'self_introduction', 'icon', 'SSB', 'SSBM', 'SSBB', 'SSB4', 'address']
               form_old_input name, user
-            $('.main-form').attr 'data-url', '/user/' + user_id
+            $('.main-form').attr 'data-url', '/user/' + user.id
         error: ->
           alert 'ユーザーデータを取得できません'
 
