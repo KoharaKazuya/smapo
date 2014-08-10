@@ -1,0 +1,42 @@
+extends ../../layout
+
+block script
+  script
+    :coffee
+      generateWidgetHatenablog 'all', 5
+      generateWidgetZusaar 'all', 5
+      generateWidgetTwitch 'all', 5
+      generateWidgetTwitter 'all', 5
+      generateWidgetVideo 'all', 5
+
+block content
+  h2.page-header 新着一覧（全体）
+  .row
+    .col-md-4
+      #blog.panel.panel-default
+        .panel-heading
+          h3.panel-title 日記
+        ul.news
+          li: a(href='/news/all/blog'): small.pull-right もっと見る
+    .col-md-4
+      #event.panel.panel-default
+        .panel-heading
+          h3.panel-title オフ会
+        ul.news
+          li: a(href='/news/all/event'): small.pull-right もっと見る
+      #flash.panel.panel-default
+        .panel-heading
+          h3.panel-title ネット対戦募集 or 一行宣伝
+        ul.news
+          li: a(href='/news/all/flash'): small.pull-right もっと見る
+    .col-md-4
+      #live.panel.panel-default
+        .panel-heading
+          h3.panel-title 生放送
+        ul.news
+          li: a(href='/news/all/live'): small.pull-right もっと見る
+      #video.panel.panel-default
+        .panel-heading
+          h3.panel-title 動画
+        ul.news
+          li: a(href='/news/all/video'): small.pull-right もっと見る

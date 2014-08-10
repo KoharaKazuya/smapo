@@ -1,0 +1,16 @@
+extends ../../layout
+
+block script
+  script
+    :coffee
+      generateWidgetHatenablog 'all'
+
+block content
+  h2.page-header 全日記一覧
+  .row
+    .col-md-12
+      #blog.panel.panel-default
+        .panel-heading
+          h3.panel-title 日記
+        ul.news
+          li

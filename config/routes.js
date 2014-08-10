@@ -113,9 +113,6 @@ module.exports.routes = {
     view: 'support/report'
   },
 
-  '/news/all': {
-    view: 'news/all'
-  },
   '/news/blog': {
     view: 'news/blog'
   },
@@ -130,6 +127,24 @@ module.exports.routes = {
   },
   '/news/video': {
     view: 'news/video'
+  },
+  '/news/all': {
+    view: 'news/all/index'
+  },
+  '/news/all/blog': {
+    view: 'news/all/blog'
+  },
+  '/news/all/event': {
+    view: 'news/all/event'
+  },
+  '/news/all/live': {
+    view: 'news/all/live'
+  },
+  '/news/all/flash': {
+    view: 'news/all/flash'
+  },
+  '/news/all/video': {
+    view: 'news/all/video'
   },
 
   /*
