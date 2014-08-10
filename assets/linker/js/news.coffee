@@ -18,6 +18,26 @@ generateWidgetHatenablog = (user, count) ->
         )
         $ul.prepend $li
 
+generateWidgetUser = (count) ->
+  url = '/user?limit=' + count
+  $loading = $('<div>').addClass('loading')
+  $('#user .panel-title').append $loading
+  jQuery.get url, (users) ->
+    $ ->
+      console.log $loading
+      $loading.remove()
+      $ul = $('#user ul')
+      for user in users
+        $li = $('<li>')
+        $li.append $('<a>').append(
+          $('<img>').addClass('user-icon').attr('src', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png')
+        ).attr('href', '/profile/' + user.id)
+        $li.append $('<a>').attr('href', '/profile/' + user.id).append(
+          $('<h5>').text(user.username + ' ').append($('<small>').text(user.catchphrase))
+          $('<p>').text(user.self_introduction)
+        )
+        $ul.prepend $li
+
 generateWidgetZusaar = (user, count) ->
   url = '/widget/zusaar'
   url += "/#{user}" if user?

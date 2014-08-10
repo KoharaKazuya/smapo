@@ -4,6 +4,7 @@ block script
   script
     :coffee
       generateWidgetHatenablog 'all', 5
+      generateWidgetUser 5
       generateWidgetZusaar 'all', 5
       generateWidgetTwitch 'all', 5
       generateWidgetTwitter 'all', 5
@@ -18,6 +19,11 @@ block content
           h3.panel-title 日記
         ul.news
           li: a(href='/news/all/blog'): small.pull-right もっと見る
+      #user.panel.panel-default
+        .panel-heading
+          h3.panel-title ユーザー
+        ul.news
+          li: a(href='/userlist'): small.pull-right もっと見る
     .col-md-4
       #event.panel.panel-default
         .panel-heading

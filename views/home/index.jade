@@ -18,6 +18,7 @@ block script
           location.href = '/hello'
 
       generateWidgetHatenablog(null, 5)
+      generateWidgetUser(5)
       generateWidgetZusaar(null, 5)
       generateWidgetTwitch(null, 5)
       generateWidgetTwitter(null, 5)
@@ -40,6 +41,13 @@ block content
         ul.news
           li
             a(href='/news/blog')
+              small.pull-right もっと見る
+      #user.panel.panel-default
+        .panel-heading
+          h3.panel-title ユーザー
+        ul.news
+          li
+            a(href='/userlist')
               small.pull-right もっと見る
     // 下部 中央
     .col-md-4
