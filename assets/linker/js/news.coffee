@@ -19,7 +19,8 @@ generateWidgetHatenablog = (user, count) ->
         $ul.prepend $li
 
 generateWidgetUser = (count) ->
-  url = '/user?limit=' + count
+  url = '/user?sort=createdAt%20desc'
+  url += '&limit=' + count if count?
   $loading = $('<div>').addClass('loading')
   $('#user .panel-title').append $loading
   jQuery.get url, (users) ->
@@ -27,7 +28,7 @@ generateWidgetUser = (count) ->
       console.log $loading
       $loading.remove()
       $ul = $('#user ul')
-      for user in users
+      for user in users.reverse()
         $li = $('<li>')
         $li.append $('<a>').append(
           $('<img>').addClass('user-icon').attr('src', if user.icon? and user.icon != '' then user.icon else '/images/icon/404_smashball.png')
