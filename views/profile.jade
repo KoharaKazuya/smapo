@@ -29,8 +29,9 @@ block script
             addServiceLink 'Zusaar', 'オフ会', "//www.zusaar.com/user/#{user.zusaar}" if user.zusaar? and user.zusaar != ''
             addServiceLink 'Twitch', '生放送', "//ja.twitch.tv/#{user.twitch}" if user.twitch? and user.twitch != ''
             addServiceLink 'Twitter', '一行宣伝', "//twitter.com/#{user.twitter}" if user.twitter? and user.twitter != ''
+            addServiceLink 'YouTube', '動画', "//www.youtube.com/user/#{user.youtube}" if user.youtube? and user.youtube != ''
+            addServiceLink 'ニコニコ動画', '動画', "//www.nicovideo.jp/user/#{user.nicovideo}" if user.nicovideo? and user.nicovideo > 0
             addServiceLink "Skype : #{user.skype}", 'その他', '#' if user.skype? and user.skype != ''
-            addServiceLink 'ニコニコ動画', 'その他', "//www.nicovideo.jp/user/#{user.nicovideo}" if user.nicovideo? and user.nicovideo > 0
         error: ->
           alert 'ユーザーデータを取得できません'
       jQuery.get '/csrfToken', (csrf) ->
