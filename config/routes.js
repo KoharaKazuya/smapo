@@ -147,6 +147,13 @@ module.exports.routes = {
     view: 'news/all/video'
   },
 
+  '/notification/index': {
+    view: 'notification/index'
+  },
+  '/notification/new': {
+    view: 'notification/new'
+  },
+
   /*
   // But what if you want your home page to display
   // a signup form located at `views/user/signup.ejs`?

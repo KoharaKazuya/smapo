@@ -1,0 +1,27 @@
+extends ../layout
+
+block script
+  script
+    :coffee
+      jQuery.get '/user/me', (me) ->
+        $ ->
+          $('[name="user_id"]').val(me.id)
+
+
+block content
+  h2.page-header 新規「お知らせ」作成
+
+  .row
+    .col-md-12
+
+      form.form-horizontal(action='/notification', method='post', accept-charset='utf-8')
+        input(type='hidden', name='_csrf', value='#{ _csrf }')
+        input(type='hidden', name='user_id')
+        fieldset
+          .form-group
+            label.col-md-3.control-label メッセージ
+            .col-md-9
+              textarea.form-control#message(rows='5', name='message')
+          .form-group
+            label.col-md-offset-3.col-md-9
+              input.btn.btn-primary(type='submit', value='作成')
