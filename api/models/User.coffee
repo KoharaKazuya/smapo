@@ -50,6 +50,9 @@ module.exports =
     hatenablog:
       type: 'string'
       maxLength: 32
+    fc2blog:
+      type: 'string'
+      maxLength: 32
     zusaar:
       type: 'string'
       maxLength: 64
@@ -128,6 +131,7 @@ removeInvalidAttributes = (values) ->
       'SSB4'
       'address'
       'hatenablog'
+      'fc2blog'
       'zusaar'
       'twitch'
       'twitter'

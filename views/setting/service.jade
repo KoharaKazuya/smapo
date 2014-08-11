@@ -9,7 +9,7 @@ block script
         url: '/user/me'
         success: (user) ->
           $ ->
-            for name in ['hatenablog', 'zusaar', 'twitch', 'twitter', 'skype', 'nicovideo', 'youtube']
+            for name in ['hatenablog', 'fc2blog', 'zusaar', 'twitch', 'twitter', 'skype', 'nicovideo', 'youtube']
               form_old_input name, user
             $('.main-form').attr 'data-url', '/user/' + user.id
             $('.main-form button:contains(確認)').on 'click', () ->
@@ -34,6 +34,13 @@ block content
                 input.form-control#hatenablog(name='hatenablog', placeholder='はてなブログの ID')
                 span.input-group-btn
                   button.btn.btn-default(type='button', data-url='//___id___.hatenablog.com') 確認
+          .form-group
+            label.col-md-3.control-label(for='fc2blog') FC2ブログ <a href="//blog.fc2.com"><span class="glyphicon glyphicon-link"></span></a>
+            .col-md-9
+              .input-group
+                input.form-control#fc2blog(name='fc2blog', placeholder='FC2ブログの FQDN')
+                span.input-group-btn
+                  button.btn.btn-default(type='button', data-url='//___id___') 確認
 
         fieldset
           legend オフ会

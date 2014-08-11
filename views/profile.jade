@@ -26,6 +26,7 @@ block script
               $li.prepend $('<small>').text(tag)
               $('#services').append $li
             addServiceLink 'はてなブログ', '日記', "//#{user.hatenablog}.hatenablog.com" if user.hatenablog? and user.hatenablog != ''
+            addServiceLink 'FC2ブログ', '日記', "//#{user.fc2blog}" if user.fc2blog? and user.fc2blog != ''
             addServiceLink 'Zusaar', 'オフ会', "//www.zusaar.com/user/#{user.zusaar}" if user.zusaar? and user.zusaar != ''
             addServiceLink 'Twitch', '生放送', "//ja.twitch.tv/#{user.twitch}" if user.twitch? and user.twitch != ''
             addServiceLink 'Twitter', '一行宣伝', "//twitter.com/#{user.twitter}" if user.twitter? and user.twitter != ''
@@ -67,7 +68,7 @@ block script
           if user_id is "#{ me.id }"
             $header = $ 'h2.page-header'
             $header.append $('<small>').text(' あなたのプロフィールページです（このページは誰でも見ることが出来ます）')
-      generateWidgetHatenablog(user_id)
+      generateWidgetBlog(user_id)
       generateWidgetZusaar(user_id)
       generateWidgetTwitch(user_id)
       generateWidgetTwitter(user_id)

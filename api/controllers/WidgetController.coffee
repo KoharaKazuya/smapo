@@ -7,8 +7,8 @@ Twitter = require 'twit'
 
 module.exports =
 
-  hatenablog: (req, res) ->
-    widget req, res, [getHatenablogData], (e) -> e.time
+  blog: (req, res) ->
+    widget req, res, [getHatenablogData, getFc2blogData], (e) -> e.time
 
   zusaar: (req, res) ->
     widget req, res, [getZusaarData], (e) -> e.time
@@ -115,6 +115,67 @@ getHatenablogData = (users, callback) ->
       # record in cache
       for cache in newRequests
         user = _.find users, (u) -> u.hatenablog is cache.name
+        cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
+        cache.save (err) -> null
+
+getFc2blogData = (users, callback) ->
+  users = _.filter users, (u) -> u.fc2blog? and u.fc2blog != ''
+  queries = _.map users, (user) ->
+    service: 'fc2blog'
+    name: user.fc2blog
+  ApiCache.findOrCreateEach ['service', 'name'], queries, (err, apis) ->
+    if err
+      console.error JSON.stringify err
+      return callback { text: 'Database error', status: 500 }
+
+    grouped = _.groupBy apis, (api) ->
+      if api.res != undefined and (new Date()).getTime() - (new Date(api.updatedAt)).getTime() < 60 * 60 * 1000  # 1hour
+        'caches'
+      else
+        'newRequests'
+    caches = grouped.caches
+    caches = [] unless caches?
+    newRequests = grouped.newRequests
+    newRequests = [] unless newRequests?
+
+    # generate access function
+    queries = _.map newRequests, (q) -> q
+    funcs = _.map newRequests, (u) ->
+      (cb) ->
+        query = queries.pop()
+        request
+          url: "http://#{ query.name }/?xml"
+          timeout: 3000
+        , (err, response, body) ->
+          if err
+            console.error JSON.stringify err
+            return cb { text: 'FC2Blog feed request error', status: 500 }
+          return cb null, null unless response.statusCode is 200
+          json = xml2json.toJson body,
+            object: true
+            sanitize: false
+          return cb null unless json['rdf:RDF']? and json['rdf:RDF'].item?
+          entries = json['rdf:RDF'].item
+          entries = [entries] unless entries instanceof Array
+          cb null, _.map entries, (e) ->
+            user = _.find users, (u) -> u.fc2blog is query.name
+            return {
+              user_id: user.id
+              user_icon: user.icon
+              title: e.title
+              time: (new Date(e['dc:date'])).getTime()
+              link: e.link
+              summary: e.description
+            }
+
+    # access all api in parallel
+    async.parallel funcs, (err, results) ->
+      return callback err if err
+      # map entries by triming
+      callback null, _.compact _.flatten results.concat _.map caches, (cache) -> cache.res
+      # record in cache
+      for cache in newRequests
+        user = _.find users, (u) -> u.fc2blog is cache.name
         cache.res = _.filter (_.compact _.flatten results), (entry) -> entry.user_id is user.id
         cache.save (err) -> null
 

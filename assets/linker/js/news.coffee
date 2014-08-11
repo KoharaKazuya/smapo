@@ -1,5 +1,5 @@
-generateWidgetHatenablog = (user, count) ->
-  url = '/widget/hatenablog'
+generateWidgetBlog = (user, count) ->
+  url = '/widget/blog'
   url += "/#{user}" if user?
   url += "?count=#{count}" if count?
   $loading = $('<div>').addClass('loading')
