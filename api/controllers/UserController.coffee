@@ -27,6 +27,7 @@ module.exports =
 
       bcrypt.compare user.password + sails.config.session.secret, (decodeURIComponent req.query.confirmation_code), (err, match) ->
         return res.json { error: 'bcrypt error' }, 500 if err
+        return res.json { error: 'Invalid password' }, 400 unless match
 
         user.password = req.query.password
         user.password_confirmation = req.query.password_confirmation
