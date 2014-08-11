@@ -50,6 +50,10 @@ module.exports.policies = {
     '*': true,
     reportbug: 'isAuthenticated',
   },
+
+  NotificationController: {
+    '*': 'isAdministrator'
+  },
 };
 
 
