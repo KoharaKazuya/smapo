@@ -113,6 +113,9 @@ module.exports.routes = {
   '/support/report': {
     view: 'support/report'
   },
+  '/support/brand': {
+    view: 'support/brand'
+  },
 
   '/news/blog': {
     view: 'news/blog'

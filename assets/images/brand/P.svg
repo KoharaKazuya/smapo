@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="-100 -200 2018 2018">
+  <rect x="-100" y="-200" width="2018" height="2018" fill="#a00" />
+  <clipPath id="plus">
+    <rect x="0" y="0" width="646" height="618" />
+    <rect x="882" y="0" width="1118" height="618" />
+    <rect x="0" y="708" width="646" height="1292" />
+    <rect x="882" y="708" width="1118" height="1292" />
+  </clipPath>
+  <circle cx="1000" cy="500" r="500" fill="white" clip-path="url(#plus)" />
+  <rect x="410" y="0" width="236" height="1618" fill="white" clip-path="url(#plus)" />
+</svg>

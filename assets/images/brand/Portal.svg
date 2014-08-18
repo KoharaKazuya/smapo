@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  viewBox="-1200 -500 7800 2600">
+  <rect x="-1200" y="-500" width="7800" height="2600" fill="#a00" />
+  <clipPath id="plus">
+    <rect x="0" y="0" width="646" height="618" />
+    <rect x="882" y="0" width="1118" height="618" />
+    <rect x="0" y="708" width="646" height="1292" />
+    <rect x="882" y="708" width="1118" height="1292" />
+  </clipPath>
+  <circle cx="1000" cy="500" r="500" fill="white" clip-path="url(#plus)" />
+  <rect x="410" y="0" width="236" height="1618" fill="white" clip-path="url(#plus)" />
+  <text x="1300" y="1618" fill="white" font-size="1618" font-family="Futura">ortal</text>
+  <text x="1800" y="300" fill="white" font-size="618" font-family="Noto Sans Japanese" font-weight="bold">スマブラ</text>
+</svg>
