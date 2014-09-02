@@ -118,7 +118,7 @@ block content
           .col-md-9
             textarea.form-control#self_introduction(name='self_introduction', maxlength=10000, rows=5, placeholder='自己紹介文には Markdown が利用できます')
         .form-group
-          label.col-md-3.control-label(for='icon') アイコン画像 URL
+          label.col-md-3.control-label(for='icon') アイコン画像 <span class="glyphicon glyphicon-question-sign" data-toggle="popover" data-placement="left" data-title="画像 URL を指定して下さい" data-content="画像は指定した URL のものが直接使われます。正方形のものを推奨します。また、画像サイズが大きすぎると表示に時間がかかるため、ご注意下さい。"></span>
           .col-md-9
             input.form-control#icon(name='icon', placeholder='アイコン画像の URL')
         .form-group
