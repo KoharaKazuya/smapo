@@ -86,6 +86,7 @@ module.exports =
           password_confirmation: 'password confirmation is different'
     # remove invalid attributes
     removeInvalidAttributes values
+    normalizeAttributes values
     # encode password
     bcrypt.hash values.password, 8, (err, hash) ->
       return next(err) if err
@@ -106,6 +107,7 @@ module.exports =
       values.confirmed = true if bcrypt.compareSync values.email + sails.config.session.secret, values.confirmation_code
 
     removeInvalidAttributes values
+    normalizeAttributes values
     # encode password
     if values.password?
       bcrypt.hash values.password, 8, (err, hash) ->
@@ -139,3 +141,12 @@ removeInvalidAttributes = (values) ->
       'nicovideo'
       'youtube'
     ]
+
+normalizeAttributes = (values) ->
+  removeString = (exprs, str) ->
+    for expr in exprs
+      str = str.replace expr, ''
+    return str
+  for k, v of values
+    if v.replace?
+      values[k] = removeString [/^.*:/, /^\/+/, /[/?&=]+/g], v

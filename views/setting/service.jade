@@ -17,9 +17,41 @@ block script
               window.open url
         error: ->
           alert 'ユーザーデータを取得できません'
+      # normalize your input
+      $ ->
+        removeString = (exprs, str) ->
+          for expr in exprs
+            str = str.replace expr, ''
+          return str
+        $('input').each ->
+          $(@).on 'change', ->
+            v = $(@).val()
+            $(@).val switch $(@).attr 'name'
+              when 'hatenablog'
+                removeString [/^.*:/, /^\/+/, /\/.*$/, /\.hatenablog\.com/], v
+              when 'fc2blog'
+                removeString [/^.*:/, /^\/+/, /\/.*$/], v
+              when 'zusaar'
+                (removeString [/^.*:/, /^\/+/], v).replace /^www\.zusaar\.com\/user\/([^/]+).*$/, '$1'
+              when 'twitch'
+                (removeString [/^.*:/, /^\/+/], v).replace /^www\.twitch\.tv\/([^/]+).*$/, '$1'
+              when 'twitter'
+                (removeString [/^.*:/, /^\/+/], v).replace /^twitter\.com\/([^/]+).*$/, '$1'
+              when 'youtube'
+                (removeString [/^.*:/, /^\/+/], v).replace /^www\.youtube\.com\/user\/([^/]+).*$/, '$1'
+              when 'nicovideo'
+                if v.replace?
+                  parseInt ((removeString [/^.*:/, /^\/+/], v).replace /^www\.nicovideo\.jp\/user\/([^/]+).*$/, '$1'), 10
+                else
+                  v
+              else
+                v
 
 block content
   h2.page-header 連携サービス設定
+  .row
+    .col-md-12
+      p.text-info よくわからなければ、ユーザーページの URL を入力して下さい。自動で修正されます。
   .row
     .col-md-12
       form.form-horizontal.main-form(action='javascript:void(0)', accept-charset='utf-8', data-method='put')
