@@ -147,6 +147,14 @@ normalizeAttributes = (values) ->
     for expr in exprs
       str = str.replace expr, ''
     return str
+  attr = [
+    'hatenablog'
+    'fc2blog'
+    'zusaar'
+    'twitch'
+    'twitter'
+    'youtube'
+  ]
   for k, v of values
-    if k isnt 'icon' and v.replace?
+    if k in attr
       values[k] = removeString [/^.*:/, /^\/+/, /[/?&=]+/g], v
