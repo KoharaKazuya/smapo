@@ -148,5 +148,5 @@ normalizeAttributes = (values) ->
       str = str.replace expr, ''
     return str
   for k, v of values
-    if v.replace?
+    if k isnt 'icon' and v.replace?
       values[k] = removeString [/^.*:/, /^\/+/, /[/?&=]+/g], v
